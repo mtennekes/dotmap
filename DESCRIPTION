@@ -1,0 +1,46 @@
+Package: dotmap
+License: GPL-3
+Title: Dot Maps
+Type: Package
+LazyLoad: yes
+Authors@R: c(
+	person("Martijn", "Tennekes", email = "mtennekes@gmail.com", role = c("aut", "cre"))
+	)
+Description: Create a tile server for interactive dotmaps
+Version: 0.0-1
+Date: 2018-07-24
+Depends:
+    R (>= 3.3),
+    methods
+Imports:
+	tmaptools (>= 2.0),
+	tmap (>= 2.0),
+  sf (>= 0.6-0),
+	lwgeom (>= 0.1-4),
+  units (>= 0.5-1),
+  raster (>= 2.5-2),
+  grid,
+  rgdal,
+  rgeos,
+  RColorBrewer,
+  viridisLite,
+  classInt,
+  htmltools,
+  htmlwidgets,
+  leaflet (>= 2.0.1),
+  png,
+  dplyr,
+  tidyr,
+  data.table,
+  randtoolbox,
+  fastmatch,
+  abind,
+  doParallel,
+  entropy
+Suggests:
+  testthat,
+  covr
+URL: https://github.com/mtennekes/dotmap
+BugReports: https://github.com/mtennekes/dotmap/issues
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
