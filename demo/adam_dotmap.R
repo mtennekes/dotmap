@@ -2,7 +2,7 @@ library(sf)
 library(tmap)
 
 bsmap <- "/media/mtes/LaCie/MTES/dotmap/"
-bsmap <- "/media/tijn/LaCie/MTES/dotmap/"
+#bsmap <- "/media/tijn/LaCie/MTES/dotmap/"
 
 load(file.path(bsmap, "dotmap_data_adam2/source/region.rdata"))
 region <- st_geometry(region)
@@ -45,9 +45,39 @@ dotmap_data_adam2 <- dotmap_data(dir="test/adam",
 
 saveRDS(dotmap_data_adam2, "test/adam/dotmap_data.rds")
 
+dotmap_data_adam2 <- readRDS("test/adam/dotmap_data.rds")
+
+
+library(doParallel)
+library(parallel)
+library(foreach)
+
+nclusters <- detectCores()
+cl <- makeCluster(4)
+registerDoParallel(cl)
 
 create_area_maps_sf(dotmap_data_adam2, pkg = ".")
 create_area_maps_sf_sec(dotmap_data_adam2, pkg = ".")
+
+subtract_area_maps(dotmap_data_adam2, pkg = ".")
+
+create_region_maps(dotmap_data_adam2, pkg = ".")
+
+determine_region_per_area_pixel(dotmap_data_adam2, pkg = ".")
+
+sample_pop_to_pixels(dotmap_data_adam2, pkg = ".")
+
+aggregate_lower_zooms(dotmap_data_adam2, pkg = ".")
+
+
+
+process_dotmap_data(dotmap_data_adam2[[1]], clusters = 2,
+                    actions = "determine_region_per_area_pixel",
+                    pkg="~/git/dotmap/pkg")
+
+
+
+stopCluster(cl)
 
 
 process_dotmap_data(dotmap_data_adam2, clusters = 3,
