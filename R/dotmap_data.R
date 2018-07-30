@@ -17,7 +17,7 @@ check_shape <- function(dir,
   f
 }
 
-dotmap_data <- function(dir,
+dotmap_project <- function(dir,
                         area1 = NULL,
                         area2 = NULL,
                         region = NULL,
@@ -30,7 +30,8 @@ dotmap_data <- function(dir,
                         z,
                         z_arr,
                         tile_size=256,
-                        transparent=TRUE
+                        transparent=TRUE,
+                        settings
                         #vars
                         ) {
 
@@ -92,6 +93,8 @@ dotmap_data <- function(dir,
   #file_pop <- file.path(project, "source/pop_data.rdata")
   dir_tiles_areas <- file.path(dir, "tiles_area")
   dir_dotmap_data <- file.path(dir, "dotmap_data")
+  
+  dir_htmlserver <- file.path(dir, "htmlserver")
   file_lookup <- file.path(dir, "lookup.rdata")
 
   ### check classes and dens_ub and dens_lb  
@@ -162,6 +165,8 @@ dotmap_data <- function(dir,
   pix_1km2 <- sapply(area_pix, "[[", 2)
   bbx <- area_pix[[1]][[3]]
 
+  settings <- do.call(dotmap_settings, settings)
+  
   list(bbx_orig=bbx,
        bbx=bbx2,
        n=n,
@@ -184,12 +189,14 @@ dotmap_data <- function(dir,
        file_shp_region=file_shp_region,
        dir_tiles_areas=dir_tiles_areas,
        dir_dotmap_data=dir_dotmap_data,
+       dir_htmlserver=dir_htmlserver,
        pop_totals = pop_totals,
-       pop_tables = pop_tables)
+       pop_tables = pop_tables,
+       settings = settings)
 }
 
 
-dotmap_settings <- function(name, L.delta, L.w, L.lim, H1, H.method="circle", sub.pops = c(TRUE, TRUE, TRUE), C.max=100, C.method="triangle", palette=NA, dir_tile_server=NA) {
+dotmap_settings <- function(L.delta, L.w, L.lim, H1, H.method="circle", sub.pops = c(TRUE, TRUE, TRUE), C.max=100, C.method="triangle", palette=NA) {
   if (!is.numeric(L.delta)) stop("delta should be a numeric")
   if (!is.numeric(L.w)) stop("w should be a numeric")
   if (!is.numeric(L.lim)) stop("L.lim should be a numeric")
@@ -207,38 +214,35 @@ dotmap_settings <- function(name, L.delta, L.w, L.lim, H1, H.method="circle", su
   
   if (!is.logical(sub.pops)) stop("sub.pops is not a logical vector")
   
-  dir_dotmap <- file.path(name, "dotmap")
-  if (is.na(dir_tile_server)) dir_tile_server <- file.path(name, paste0("tiles_", name))
-  
-  res <- list(name=name, L.delta=L.delta, L.w=L.w, L.lim=L.lim, H1=H1, H.method=H.method, sub.pops=sub.pops, C.max=C.max, C.method=C.method, palette=palette, dir_dotmap=dir_dotmap, dir_tile_server=dir_tile_server)
+  res <- list(L.delta=L.delta, L.w=L.w, L.lim=L.lim, H1=H1, H.method=H.method, sub.pops=sub.pops, C.max=C.max, C.method=C.method, palette=palette)
   class(res) <- "dotmap_settings"
   res
 }
-
-dotmap_settings_perm <- function(settings) {
-  k <- length(settings$sub.pops)
-  p <- 2^k
-  tab <- e1071::bincombinations(k)[c(p, 2:(p-1)),]
-  
-  apply(tab, MARGIN = 1, FUN = function(r) {
-    rstring <- paste(r, collapse="")
-    settings$sub.pops <- as.logical(r)
-    #settings$name <- paste(settings$name, rstring, sep="_")
-    settings$dir_dotmap <- paste(settings$dir_dotmap, rstring, sep="_")
-    settings$dir_tile_server <- paste(settings$dir_tile_server, rstring, sep="_")
-    settings
-  })
-  
-}
-
-dotmap_settings_vars <- function(settings, vars) {
-  nc <- nchar(settings$file_pop)
-  lapply(vars, function(v) {
-    settings$dir_dotmap <- paste(settings$dir_dotmap, v, sep="_")
-    settings$dir_tile_server <- paste(settings$dir_tile_server, v, sep="_")
-    settings
-  })
-}
+# 
+# dotmap_settings_perm <- function(settings) {
+#   k <- length(settings$sub.pops)
+#   p <- 2^k
+#   tab <- e1071::bincombinations(k)[c(p, 2:(p-1)),]
+#   
+#   apply(tab, MARGIN = 1, FUN = function(r) {
+#     rstring <- paste(r, collapse="")
+#     settings$sub.pops <- as.logical(r)
+#     #settings$name <- paste(settings$name, rstring, sep="_")
+#     settings$dir_dotmap <- paste(settings$dir_dotmap, rstring, sep="_")
+#     settings$dir_tile_server <- paste(settings$dir_tile_server, rstring, sep="_")
+#     settings
+#   })
+#   
+# }
+# 
+# dotmap_settings_vars <- function(settings, vars) {
+#   nc <- nchar(settings$file_pop)
+#   lapply(vars, function(v) {
+#     settings$dir_dotmap <- paste(settings$dir_dotmap, v, sep="_")
+#     settings$dir_tile_server <- paste(settings$dir_tile_server, v, sep="_")
+#     settings
+#   })
+# }
 
 
 
