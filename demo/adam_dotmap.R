@@ -65,8 +65,29 @@ determine_region_per_area_pixel(dotmap_data_adam2, pkg = ".")
 sample_pop_to_pixels(dotmap_data_adam2, pkg = ".")
 aggregate_lower_zooms(dotmap_data_adam2, pkg = ".")
 plot_dotmap(dotmap_data_adam2, pkg = ".")
-
 make_tile_server(dotmap_data_adam2, pkg = ".")
 
 
 stopCluster(cl)
+
+
+# Launch local Apache server
+# Install XAMPP or LAMP (Linux)
+# sudo /opt/lampp/manager-linux-x64.run
+# sudo cp -a * /var/www/html/
+
+ttm()
+
+
+region <- readRDS(dotmap_data_adam2$file_shp_region)
+zmin <- min(dotmap_data_adam2$z_from)
+zmax <- max(dotmap_data_adam2$z_to)
+
+save(region, zmin, zmax, file="../tmap/adam.rdata")
+
+tm_shape(region) +
+  tm_borders() +
+  tm_tiles("http://127.0.0.1/hh/{z}/{x}/{y}.png", group = "Household") +
+  tm_tiles("http://127.0.0.1/inc/{z}/{x}/{y}.png", group = "Income") +
+  tm_view(set.zoom.limits = c(12, zmax))
+
