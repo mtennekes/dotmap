@@ -7,18 +7,20 @@ sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE, p
   rmeta <- readRDS(file.path(dm$dir_tiles_areas, "rmeta_pixels.rds"))
   
   nvars <- length(dm$m)
-  nagg <- length(dm$z_res)
+  #nagg <- length(dm$z_res)
+  
+  a <- which.max(dm$z_res)
   
  
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   
-  ri_res <- dm$ri[[paste0("z", dm$z_res)]]
+  ri_res <- dm$ri[[paste0("z", dm$z_res[a])]]
   
   res <- ri_res$py/ri_arr$ny
   
   rnd <- random_seq(res)
   
-  for (a in 1:nagg) {
+  #for (a in 1:nagg) {
     for (k in 1:nvars) {
       dmk <- dm
       dmk$m <- dmk$m[k]
@@ -33,7 +35,7 @@ sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE, p
       dmk$pop_tables <- NULL
       sample_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, pkg=pkg, rnd=rnd)
     }
-  }
+  #}
 }
   
 random_seq <- function(res) {

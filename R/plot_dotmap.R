@@ -43,7 +43,7 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   
   dir <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
-  lapply(file.path(dir, (dm$z_res-1):zmin), function(d) dir.create(d, recursive = TRUE, showWarnings = FALSE))
+  #lapply(file.path(dir, (dm$z_res-1):zmin), function(d) dir.create(d, recursive = TRUE, showWarnings = FALSE))
   
   #dirdotmap <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
 

@@ -20,6 +20,9 @@ make_tile_server <- function(dm, logfile=NULL, pkg="pkg") {
       dmk$resname <- paste0("res", dmk$z_res)
       dmk$pop_table_name <- names(dmk$pop_tables)[k]
       
+      dmk$dir <- file.path(dmk$dir_htmlserver, dmk$resname, dmk$pop_table_name)
+      unlink(dmk$dir, recursive = TRUE, force = TRUE)      
+      
       make_tile_server_i(dmk, logfile=logfile, pkg=pkg)
     }
   }
@@ -40,8 +43,7 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
   zsplt <- dm$z_res:dm$z_arr
   zcomb <- if (zmin < dm$z_arr) (dm$z_arr-1):zmin else NULL
   src <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
-  dir <- file.path(dm$dir_htmlserver, dm$resname, dm$pop_table_name)
-  unlink(dir, recursive = TRUE, force = TRUE)
+  dir <- dm$dir
   
   ts <- dm$tile_size
   transparent <- dm$transparent

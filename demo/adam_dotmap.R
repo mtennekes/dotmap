@@ -2,7 +2,7 @@ library(sf)
 library(tmap)
 
 bsmap <- "/media/mtes/LaCie/MTES/dotmap/"
-#bsmap <- "/media/tijn/LaCie/MTES/dotmap/"
+bsmap <- "/media/tijn/LaCie/MTES/dotmap/"
 
 load(file.path(bsmap, "dotmap_data_adam2/source/region.rdata"))
 region <- st_geometry(region)
@@ -38,7 +38,9 @@ dotmap_data_adam2 <- dotmap_project(dir="test/adam",
                                  dens_ub = c(28000, 20000, 15000, 10000, 10000),
                                  dens_lb = c(0, 0, 0, 0, 0),
                                  bbx=NA,
-                                 z = list(c(14, 7, 16)), #17
+                                 z = list(c(10, 7, 11), 
+                                          c(12, 12, 13), 
+                                          c(14, 14, 16)),
                                  z_arr=10,
                                  tile_size=256,
                                  transparent=TRUE,
@@ -54,7 +56,7 @@ library(parallel)
 library(foreach)
 
 nclusters <- detectCores()
-cl <- makeCluster(4)
+cl <- makeCluster(2)
 registerDoParallel(cl)
 
 create_area_maps_sf(dotmap_data_adam2, pkg = ".")
@@ -63,7 +65,11 @@ subtract_area_maps(dotmap_data_adam2, pkg = ".")
 create_region_maps(dotmap_data_adam2, pkg = ".")
 determine_region_per_area_pixel(dotmap_data_adam2, pkg = ".")
 sample_pop_to_pixels(dotmap_data_adam2, pkg = ".")
+
+aggregate_dotmap_data(dotmap_data_adam2, pkg = ".", s=4)
+
 aggregate_lower_zooms(dotmap_data_adam2, pkg = ".")
+
 plot_dotmap(dotmap_data_adam2, pkg = ".")
 make_tile_server(dotmap_data_adam2, pkg = ".")
 
