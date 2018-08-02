@@ -9,22 +9,23 @@ make_tile_server <- function(dm, logfile=NULL, pkg="pkg") {
   nvars <- length(dm$m)
   nagg <- length(dm$z_res)
   
-  for (a in 1:nagg) {
-    for (k in 1:nvars) {
-      dmk <- dm
-      dmk$m <- dmk$m[k]
-      
-      dmk$z_from <- dmk$z_from[a]
-      dmk$z_to <- dmk$z_to[a]
-      dmk$z_res <- dmk$z_res[a]
+  for (k in 1:nvars) {
+    dmk <- dm
+    dmk$m <- dmk$m[k]
+    
+    dmk$pop_table_name <- names(dmk$pop_tables)[k]
+    
+    dmk$dir <- file.path(dmk$dir_htmlserver, dmk$pop_table_name) #dmk$resname, 
+    unlink(dmk$dir, recursive = TRUE, force = TRUE)      
+    
+    for (a in 1:nagg) {
+      dmk$z_from <- dm$z_from[a]
+      dmk$z_to <- dm$z_to[a]
+      dmk$z_res <- dm$z_res[a]
       dmk$resname <- paste0("res", dmk$z_res)
-      dmk$pop_table_name <- names(dmk$pop_tables)[k]
-      
-      dmk$dir <- file.path(dmk$dir_htmlserver, dmk$resname, dmk$pop_table_name)
-      unlink(dmk$dir, recursive = TRUE, force = TRUE)      
-      
       make_tile_server_i(dmk, logfile=logfile, pkg=pkg)
     }
+    
   }
   
 }
@@ -34,20 +35,29 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
   zmin <- dm$z_from
   zmax <- dm$z_to
   
+  zall <- zmin:zmax
   
   message("Make tile server files")
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   ri_res <- dm$ri[[paste0("z", dm$z_res)]]
   
-  zxtra <- if (zmax > dm$z_res) (dm$z_res+1):zmax else NULL
-  zsplt <- dm$z_res:dm$z_arr
-  zcomb <- if (zmin < dm$z_arr) (dm$z_arr-1):zmin else NULL
+  
+  zcomb <- if (zmin < dm$z_arr) intersect((dm$z_arr-1):zmin, zall) else NULL
+  zsplt <- intersect(max(dm$z_res, dm$z_arr):dm$z_arr, zall)
+  zxtra <- if (zmax > max(dm$z_res, dm$z_arr)) intersect((max(dm$z_res, dm$z_arr)+1):zmax, zall) else NULL
+
+  
+  cat("zcomb ", paste(zcomb, collage=","), "\n")
+  cat("zsplt ", paste(zsplt, collage=","), "\n")
+  cat("zxtra ", paste(zxtra, collage=","), "\n")
+  
   src <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
   dir <- dm$dir
   
   ts <- dm$tile_size
   transparent <- dm$transparent
   
+
   for (z in zsplt) {
     message("Process zoom level ", z)
     
@@ -60,6 +70,7 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     lapply(rz$xmin:rz$xmax, function(x) dir.create(file.path(dir, z, x), recursive = TRUE, showWarnings = FALSE))
     
     if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
+    
     foreach(i=1:ri_arr$nx) %dopar% { 
       devtools::load_all(pkg)
       if (!is.null(logfile)) {
@@ -181,6 +192,12 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     dir.create(file.path(dir, z), recursive = TRUE, showWarnings = FALSE)
     rz <- dm$ri[[paste0("z", z)]]
     
+    
+    # if (z < dm$z_arr) {
+    #   
+    # }
+    
+    
     nx <- rz$nx / ri_arr$nx
     ny <- rz$ny / ri_arr$ny
 
@@ -214,18 +231,14 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     #   circ <- circle_coverage(n=mx, radius=.75)
     # }
 
-    if (mx==ts/32) {
-      circ <- circle_coverage(n=mx, radius=.9) #.75
-    } else if (mx==ts/64) {
-      circ <- circle_coverage(n=mx, radius=1.1)
-    } else {
-      circ <- circle_coverage(n=mx, radius=2)
-    }
     
-    patt <- stack_patterns(m=circ, nr=ts, nc=ts)
+    patt <- get_pattern(mx, ts)
+    
     
     if (!transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
 
+    
+    
     #browser()
     foreach(i=1:ri_arr$nx) %dopar% { 
       devtools::load_all(pkg)
@@ -351,4 +364,15 @@ alias_dots <- function(m, size) {
     #     seq(4,ncol(m), by=4)),] <- 1
   }
   m
+}
+
+get_pattern <- function(mx, ts, fact=1) {
+  if (mx==ts/32) {
+    circ <- circle_coverage(n=mx, radius=.9) #.75
+  } else if (mx==ts/64) {
+    circ <- circle_coverage(n=mx, radius=1.1)
+  } else {
+    circ <- circle_coverage(n=mx, radius=2)
+  }
+  patt <- stack_patterns(m=circ, nr=ts * fact, nc=ts * fact)
 }

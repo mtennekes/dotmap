@@ -54,13 +54,13 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
 aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
   
 
-  
+  print(dir1)
+
   
   seti <- 1L:ri_arr$nx
   setj <- 1L:ri_arr$ny
   
   s <- f # not sure whether s!=f can happen
-  
   
   for (i in seti) {
     for (j in setj) {
@@ -97,6 +97,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
 
       # 2d kde
       blist <- lapply(1:m, function(ii) {
+        if (asums[[ii]] == 0) return(matrix(0, ncol = k, nrow = k))
         bi <- bkde2D(matrix_to_row_col(a[,,ii]), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat
         bi <- bi / sum(bi) * asums[ii]
         bi[bi < 1] <- 0
@@ -111,12 +112,16 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
       
       b2 <- matrix(b, ncol=m)
 
+      
+      #if (i==6 && j == 1 && dir1 == "test/adam/dotmap_data/res10/wood/10") browser()
+      
       pw <- rep(1, m)      
       for (it in 1:10) {
         x <- sapply(ids, function(id) {
           sample(1:m, size = 1, prob = b2[id, ] * pw)
         })
-        pw <- pw / (tabulate(x, nbins = 3) / ls)
+        pw <- pw / (tabulate(x, nbins = m) / ls)
+        pw[is.infinite(pw) | is.nan(pw)] <- 1e6
       }
       
       

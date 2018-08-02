@@ -7,7 +7,7 @@
 create_region_maps <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
   region <- NULL
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
-  ri_res <- dm$ri[[paste0("z", dm$z_res)]]
+  ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
   
   message("Creating region tiles at resolution ", ri_res$zoom, " and arrangement ", ri_arr$zoom)
   dir.create(dm$dir_tiles_areas, recursive = TRUE, showWarnings = FALSE)

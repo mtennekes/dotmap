@@ -19,6 +19,7 @@ plot_dotmap <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
       dmk$z_res <- dmk$z_res[a]
       dmk$resname <- paste0("res", dmk$z_res)
       dmk$pop_table_name <- names(dmk$pop_tables)[k]
+      dmk$settings <- dmk$settings[[k]]
       
       plot_dotmap_i(dmk, i=i, j=j, logfile=logfile, pkg=pkg)
     }
@@ -40,6 +41,25 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
     dm$z_res:zmin
   } else z
   
+  setz_zoom <- if (dm$z_res < dm$z_arr) {
+    (dm$z_res+1):dm$z_arr
+  } else NULL
+  
+  if (!is.null(setz_zoom)) {
+    patts <- lapply(setz_zoom, function(z) {
+      fact <- (z - dm$z_res) * 2
+      
+      patt <- get_pattern(mx=fact, adam$tile_size, fact = (fact/4))
+      if (!adam$transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
+      patt
+    })
+  }
+  
+  
+  
+  
+  
+
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   
   dir <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
@@ -49,6 +69,7 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
 
   subset_pop <- !all(setup$sub.pops)
   foreach(i=seti) %dopar% { 
+  #for (i in seti) {
     devtools::load_all(pkg)
     if (!is.null(logfile)) {
       f <- openLog(logfile)
@@ -63,11 +84,39 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
           if (subset_pop) a[, !setup$sub.pops] <- 0L
           x <- get_HCL_colors(a, L.delta=setup$L.delta, L.w=setup$L.w, zf=dm$z_res-z, transparent=dm$transparent, output = "rgb", L.lim = setup$L.lim, H1 = setup$H1, H.method=setup$H.method, C.max=100, palette=setup$palette)
           rm(a); gc()
-          a2 <- array(x, dim=c(dm$ri[[rz]]$px / ri_arr$nx, dm$ri[[rz]]$py / ri_arr$ny, ncol(x)))
+          
+          nr <- dm$ri[[rz]]$px / ri_arr$nx
+          nc <- dm$ri[[rz]]$py / ri_arr$ny
+          
+          a2 <- array(x, dim=c(nr, nc, ncol(x)))
           
           png::writePNG(a2, target=file.path(dir, z, paste0("dotmap_", i, "_", j, ".png")))
+          
+          if (z == dm$z_res && !is.null(setz_zoom)) {
+            for (zi in 1L:length(setz_zoom)) {
+              z2 <-  setz_zoom[zi]
+              
+              fact <- (z2-z)*2
+              a3 <- a2[rep(1L:nr, each = fact),
+                       rep(1L:nc, each = fact), ]
+              
+              if (adam$transparent) {
+                
+                a4 <- a3
+                a4[,,4] <- a4[,,4] * patts[[zi]]
+              } else {
+                a4 <- a3 * patts[[zi]] + (1-patts[[zi]])
+              }
+              
+              
+              dir.create(file.path(dir, z2), showWarnings = FALSE, recursive = TRUE)
+              png::writePNG(a4, target=file.path(dir, z2, paste0("dotmap_", i, "_", j, ".png")))
+            }
+          }
+          
         }
       }
+      
     }
     if (!is.null(logfile)) closeLog(f)
   }

@@ -10,16 +10,17 @@
 #' @param transparent should the background be transparent? If \code{FALSE}, it will be white.
 #' @param output a subset of: \code{"colors"}, which outputs the color codes, \code{"hcl"}, which outputs the H, C and L parameters, and \code{"rgb"}, which outputs the red, green and blue values.
 #' @return a \code{vector} if \code{output="colors"}, \code{matrix} if \code{all(output %in% c("hcl", "rgb))} and a \code{data.frame} otherwise.
-get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, output=c("colors", "hcl", "rgb"), H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=palette, ...) {
+get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, output=c("colors", "hcl", "rgb"), H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=NA, ...) {
   
   C.method <- match.arg(C.method)
   L.method <- match.arg(L.method)
-  
+  H.method <- match.arg(H.method)
   
   nrowx <- nrow(m)
   ncolx <- ncol(m)
   
-  if (ncolx > 3) stop("Number of columns should be at most three")
+  if (ncolx > 3 && is.na(palette[1])) stop("Number of columns should be at most three, or a palette should be defined")
+  
   if (!is.matrix(m)) {
     if (is.data.frame(m)) {
       m <- as.matrix(m)
@@ -43,7 +44,7 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
     })
     cols <- palette[maxn]
   } else {
-    if (H.method=="circle") {
+    if (H.method == "cat") { #difference???
       if (ncolx==3) {
         # calculate cartesian coordinates
         y <- (n[,3] * sqrt(3) / 2) - (sqrt(3) / 6)

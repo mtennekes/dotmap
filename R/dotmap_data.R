@@ -151,21 +151,29 @@ dotmap_project <- function(dir,
   
   # approximate persons per km2
   
-  area_pix <- lapply(z_res, function(z_r) {
-    res <- ri[[paste0("z", z_r)]]
-    bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = "rd")
-    tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
-    tile_size_px <- c(res$px/res$nx, res$py/res$ny) 
-    area_1pix <- prod(tile_size_m / tile_size_px)
-    pix_1km2 <- prod(tile_size_px / tile_size_m * 1000)
-    list(area_1pix = area_1pix, pix_1km2 = pix_1km2, bbx = bbx)
-  })
+  #area_pix <- lapply(z_res, function(z_r) {
+  z_r <- max(z_res)
   
-  area_1pix <- sapply(area_pix, "[[", 1)
-  pix_1km2 <- sapply(area_pix, "[[", 2)
-  bbx <- area_pix[[1]][[3]]
+  res <- ri[[paste0("z", z_r)]]
+  bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = "rd")
+  tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
+  tile_size_px <- c(res$px/res$nx, res$py/res$ny) 
+  area_1pix <- prod(tile_size_m / tile_size_px)
+  pix_1km2 <- prod(tile_size_px / tile_size_m * 1000)
+  # list(area_1pix = area_1pix, pix_1km2 = pix_1km2, bbx = bbx)
+  #})
+  
+  # area_1pix <- sapply(area_pix, "[[", 1)
+  # pix_1km2 <- sapply(area_pix, "[[", 2)
+  # bbx <- area_pix[[1]][[3]]
 
-  settings <- do.call(dotmap_settings, settings)
+  if (setequal(names(settings), names(pop_tables))) {
+    settings <- lapply(settings, function(s) do.call(dotmap_settings, s))[names(pop_tables)]
+  } else {
+    s <- do.call(dotmap_settings, settings)
+    settings <- lapply(names(pop_tables), function(nm) s)
+    names(settings) <- names(pop_tables)
+  }
   
   list(bbx_orig=bbx,
        bbx=bbx2,
@@ -196,7 +204,7 @@ dotmap_project <- function(dir,
 }
 
 
-dotmap_settings <- function(L.delta, L.w, L.lim, H1, H.method="circle", sub.pops = c(TRUE, TRUE, TRUE), C.max=100, C.method="triangle", palette=NA) {
+dotmap_settings <- function(L.delta, L.w, L.lim, H1, H.method="cat", sub.pops = c(TRUE, TRUE, TRUE), C.max=100, C.method="triangle", palette=NA) {
   if (!is.numeric(L.delta)) stop("delta should be a numeric")
   if (!is.numeric(L.w)) stop("w should be a numeric")
   if (!is.numeric(L.lim)) stop("L.lim should be a numeric")

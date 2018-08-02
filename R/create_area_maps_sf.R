@@ -27,7 +27,7 @@
 create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, pkg="pkg") {
   area1 <- area2 <- NULL
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
-  ri_res <- dm$ri[[paste0("z", dm$z_res)]]
+  ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
   
   message("Creating area tiles at resolution ", ri_res$zoom, " and arrangement ", ri_arr$zoom)
   dir.create(dm$dir_tiles_areas, recursive = TRUE, showWarnings = FALSE)
@@ -106,7 +106,7 @@ create_area_maps_sf_sec <- function(dm, i=NULL, j=NULL, primary=FALSE, logfile=N
 
 subtract_area_maps <- function(dm, i=NULL, j=NULL, f1="area1", f2="area2", logfile=NULL, pkg="pkg") {
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
-  ri_res <- dm$ri[[paste0("z", dm$z_res)]]
+  ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
   
   seti <- get_range(i, ri_arr$nx)
   setj <- get_range(j, ri_arr$ny)
