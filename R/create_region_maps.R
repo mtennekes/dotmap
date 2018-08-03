@@ -12,10 +12,10 @@ create_region_maps <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
   message("Creating region tiles at resolution ", ri_res$zoom, " and arrangement ", ri_arr$zoom)
   dir.create(dm$dir_tiles_areas, recursive = TRUE, showWarnings = FALSE)
   region <- readRDS(dm$file_shp_region)
-  
+  region <- sf::st_transform(region, crs = 3857)
   lookup <- dm$lookup
 #browser()
-  region <- st_sf(region)
+  region <- sf::st_sf(region)
   
  # st_bbox(region) <- ri_res$bbx
   

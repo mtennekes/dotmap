@@ -49,8 +49,8 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
     patts <- lapply(setz_zoom, function(z) {
       fact <- (z - dm$z_res) * 2
       
-      patt <- get_pattern(mx=fact, adam$tile_size, fact = (fact/4))
-      if (!adam$transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
+      patt <- get_pattern(mx=fact, dm$tile_size, fact = (fact/4))
+      if (!dm$transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
       patt
     })
   }
@@ -100,7 +100,7 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
               a3 <- a2[rep(1L:nr, each = fact),
                        rep(1L:nc, each = fact), ]
               
-              if (adam$transparent) {
+              if (dm$transparent) {
                 
                 a4 <- a3
                 a4[,,4] <- a4[,,4] * patts[[zi]]

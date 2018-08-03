@@ -34,11 +34,12 @@ create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, 
   
   if (primary) {
     area1 <- readRDS(dm$file_shp_area1)
+    area1 <- sf::st_transform(area1, crs = 3857)
     # area1@bbox <- ri_res$bbx
     #attr(area1, "bbox")[1:4]  <- as.vector(ri_res$bbx)[1:4]
   } else {
     area2 <- readRDS(dm$file_shp_area2)
-    
+    area2 <- sf::st_transform(area2, crs = 3857)
     # load(dm$file_shp_area2)
     # area2@bbox <- ri_res$bbx
   }
@@ -49,7 +50,6 @@ create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, 
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   openLog <- openLog; closeLog <- closeLog
   
-#  browser()
   foreach(i=seti) %dopar% { 
     devtools::load_all(pkg)
 

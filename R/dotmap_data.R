@@ -9,7 +9,7 @@ check_shape <- function(dir,
     if (!file.exists(f)) stop(object, " not found. Either specify it, or save it as ", f)
   } else {
     if (inherits(shp, "sf")) {
-      shp <- st_geometry(shp)
+      shp <- sf::st_geometry(shp)
     }
     if (!inherits(shp, "sfc")) stop(object, " is neither an sf nor an sfc object")
     saveRDS(shp, file = f)
@@ -17,6 +17,41 @@ check_shape <- function(dir,
   f
 }
 
+#' Create dotmap project
+#' 
+#' Create dotmap project
+#' 
+#' @param dir dir
+#' @param area1 area1
+#' @param area2 area2
+#' @param region region
+#' @param pop_totals pop_totals
+#' @param pop_tables pop_tables
+#' @param dens_ub dens_ub
+#' @param dens_lb dens_lb
+#' @param bbx bbx
+#' @param z z
+#' @param z_arr z_arr
+#' @param tile_size tile_size
+#' @param transparent transparent
+#' @param settings settings
+#' @export
+#' @import grid
+#' @import png
+#' @import tmap
+#' @import tmaptools
+#' @import sf
+#' @import dplyr
+#' @import tidyr
+#' @importFrom data.table data.table setkey setkeyv ':='
+#' @importFrom raster brick aggregate
+#' @import randtoolbox
+#' @importFrom fastmatch fmatch
+#' @import abind
+#' @import doParallel
+#' @import parallel
+#' @import foreach
+#' @import entropy 
 dotmap_project <- function(dir,
                         area1 = NULL,
                         area2 = NULL,

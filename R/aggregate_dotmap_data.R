@@ -54,7 +54,6 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
 aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
   
 
-  print(dir1)
 
   
   seti <- 1L:ri_arr$nx
@@ -82,6 +81,12 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
       ls <- round(asums / s)
       l <- sum(ls)
       
+      if (l==0) {
+        a <- matrix(0L, nrow=k^2, ncol=m)
+        save(a, file = file.path(dir2, paste0("pop_", i, "_", j, ".rdata"))) 
+        next
+      }
+      
       # x <- a[,, 1]
       # 
       # x2 <- bkde2D(matrix_to_row_col(x), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat
@@ -96,6 +101,8 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
       # sum(b>0)
 
       # 2d kde
+      #if (i==1 && j==7) browser()
+      
       blist <- lapply(1:m, function(ii) {
         if (asums[[ii]] == 0) return(matrix(0, ncol = k, nrow = k))
         bi <- bkde2D(matrix_to_row_col(a[,,ii]), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat
@@ -109,28 +116,35 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
       probs <- as.vector(btot)
 
       ids <- which(btot>0)
-      
-      b2 <- matrix(b, ncol=m)
+
 
       
-      #if (i==6 && j == 1 && dir1 == "test/adam/dotmap_data/res10/wood/10") browser()
-      
-      pw <- rep(1, m)      
-      for (it in 1:10) {
-        x <- sapply(ids, function(id) {
-          sample(1:m, size = 1, prob = b2[id, ] * pw)
-        })
-        pw <- pw / (tabulate(x, nbins = m) / ls)
-        pw[is.infinite(pw) | is.nan(pw)] <- 1e6
+      if (length(ids) == 0) {
+        a <- matrix(0L, nrow=k^2, ncol=m)
+        save(a, file = file.path(dir2, paste0("pop_", i, "_", j, ".rdata"))) 
+        next
       }
       
       
       a <- matrix(0L, nrow=k^2, ncol=m)
-      
+
+      b2 <- matrix(b, ncol=m)
+    
+      pw <- rep(1, m)      
+      for (it in 1:10) {
+        x <- sapply(ids, function(id) {
+          prb <- b2[id, ] * pw
+          if (all(prb==0)) return(NA)
+          sample(1:m, size = 1, prob = prb)
+        })
+        pw <- pw / (tabulate(x, nbins = m) / ls)
+        pw[is.infinite(pw) | is.nan(pw)] <- 1e6
+      }
+
       for (ii in 1:m) {
         a[ids[which(x==ii)], ii] <- 1L
       }
-      
+
       save(a, file = file.path(dir2, paste0("pop_", i, "_", j, ".rdata")))
     }
   }

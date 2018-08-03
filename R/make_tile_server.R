@@ -46,11 +46,11 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
   zsplt <- intersect(max(dm$z_res, dm$z_arr):dm$z_arr, zall)
   zxtra <- if (zmax > max(dm$z_res, dm$z_arr)) intersect((max(dm$z_res, dm$z_arr)+1):zmax, zall) else NULL
 
-  
+
   cat("zcomb ", paste(zcomb, collage=","), "\n")
   cat("zsplt ", paste(zsplt, collage=","), "\n")
   cat("zxtra ", paste(zxtra, collage=","), "\n")
-  
+
   src <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
   dir <- dm$dir
   
@@ -70,8 +70,8 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     lapply(rz$xmin:rz$xmax, function(x) dir.create(file.path(dir, z, x), recursive = TRUE, showWarnings = FALSE))
     
     if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
-    
-    foreach(i=1:ri_arr$nx) %dopar% { 
+    for (i in 1:ri_arr$nx) {
+    #foreach(i=1:ri_arr$nx) %dopar% { 
       devtools::load_all(pkg)
       if (!is.null(logfile)) {
         #logfile <- paste0(substr(logfile, 1, nchar(logfile)-4), Sys.getpid(), ".txt")
@@ -173,7 +173,6 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
           }
           
           ty <- rz$ymin + (j-2)
-          
           png::writePNG(r2, file.path(dir2, paste(ty, "png", sep=".")))
         }
       }
@@ -240,7 +239,8 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     
     
     #browser()
-    foreach(i=1:ri_arr$nx) %dopar% { 
+    #foreach(i=1:ri_arr$nx) %dopar% { 
+    for (i in 1:ri_arr$nx) {
       devtools::load_all(pkg)
       if (!is.null(logfile)) {
         #logfile <- paste0(substr(logfile, 1, nchar(logfile)-4), Sys.getpid(), ".txt")
@@ -265,6 +265,9 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
           # })
           
           xsi <- intersect(xs, (rz$xmin + 0 + (i-1) * nx):(rz$xmin + (nx-1) + (i-1) * nx))
+          
+          browser()
+          
           lapply(xsi, function(tx) { #if (!all(r==1)) 
             x <- -rz$xmin + tx - (i-1) * nx
             xrange <- (x * rx + 1):((x+1) * rx)

@@ -84,33 +84,36 @@ data(NLD_muni)
 
 NLD_pop <- NLD_muni %>% 
   st_set_geometry(NULL) %>% 
-  transmute(pop = population,
+  transmute(pop = round(population / 1000),
             class = 1L)
 
 NLD_origin <- NLD_muni %>% 
   st_set_geometry(NULL) %>% 
-  mutate(origin_west = round(origin_west / 100 * population),
-         origin_non_west = round(origin_non_west / 100 * population)) %>% 
-  transmute(origin_native = population - origin_west,
+  mutate(origin_west = round(origin_west / 100 * (population / 1000)),
+         origin_non_west = round(origin_non_west / 100 * (population / 1000))) %>% 
+  transmute(origin_native = round(population/1000) - origin_west - origin_non_west,
             origin_west = origin_west,
             origin_non_west = origin_non_west)
+all(rowSums(NLD_origin) == NLD_pop$pop)
 
 NLD_gender <- NLD_muni %>% 
   st_set_geometry(NULL) %>% 
-  transmute(men = pop_men,
-            women = pop_women)
+  transmute(men = round(pop_men / 1000),
+            women = round(population/1000) - men)
+all(rowSums(NLD_gender) == NLD_pop$pop)
 
 NLD_age <- NLD_muni %>% 
   st_set_geometry(NULL) %>% 
-  mutate(age_0_14 = round(pop_0_14 / 100 * population),
-         age_15_24 = round(pop_15_24 / 100 * population),
-         age_25_44 = round(pop_25_44 / 100 * population),
-         age_65plus = round(pop_65plus / 100 * population)) %>% 
+  mutate(age_0_14 = round(pop_0_14 / 100 * population/1000),
+         age_15_24 = round(pop_15_24 / 100 * population/1000),
+         age_25_44 = round(pop_25_44 / 100 * population/1000),
+         age_65plus = round(pop_65plus / 100 * population/1000)) %>% 
   transmute(age_0_14 = age_0_14,
             age_15_24 = age_15_24,
             age_25_44 = age_25_44,
-            age_45_64 = population - age_0_14 - age_15_24 - age_25_44 - age_65plus,
+            age_45_64 = round(population/1000) - age_0_14 - age_15_24 - age_25_44 - age_65plus,
             age_65plus = age_65plus)
+all(rowSums(NLD_age) == NLD_pop$pop)
 
 
 save(NLD_pop, file = "data/NLD_pop.rda", compress = "xz")
