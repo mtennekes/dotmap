@@ -266,7 +266,7 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
           
           xsi <- intersect(xs, (rz$xmin + 0 + (i-1) * nx):(rz$xmin + (nx-1) + (i-1) * nx))
           
-          browser()
+          #browser()
           
           lapply(xsi, function(tx) { #if (!all(r==1)) 
             x <- -rz$xmin + tx - (i-1) * nx

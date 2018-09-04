@@ -83,7 +83,7 @@ sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, pkg, rnd) {
 
   seti <- get_range(i, ri_arr$nx)
   setj <- get_range(j, ri_arr$ny)
-    
+  #browser()  
   
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
 

@@ -8,6 +8,8 @@
 plot_dotmap <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   nvars <- length(dm$m)
   nagg <- length(dm$z_res)
+
+  message("Plot dotmap")
   
   for (a in 1:nagg) {
     for (k in 1:nvars) {
@@ -32,7 +34,6 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   
   setup <- dm$settings
     
-  message("Plot dotmap")
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   
   seti <- get_range(i, ri_arr$nx)
@@ -47,14 +48,15 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   
   if (!is.null(setz_zoom)) {
     patts <- lapply(setz_zoom, function(z) {
-      fact <- (z - dm$z_res) * 2
+      fact <- (dm$z_arr - z) * 2
       
-      patt <- get_pattern(mx=fact, dm$tile_size, fact = (fact/4))
+      if (fact==0) return(1)
+      
+      patt <- get_pattern(mx=fact, dm$tile_size, fact = 1/fact)
       if (!dm$transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
       patt
     })
   }
-  
   
   
   
@@ -68,6 +70,7 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   #dirdotmap <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
 
   subset_pop <- !all(setup$sub.pops)
+  #browser()
   foreach(i=seti) %dopar% { 
   #for (i in seti) {
     devtools::load_all(pkg)
@@ -100,6 +103,8 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
               a3 <- a2[rep(1L:nr, each = fact),
                        rep(1L:nc, each = fact), ]
               
+              
+
               if (dm$transparent) {
                 
                 a4 <- a3
