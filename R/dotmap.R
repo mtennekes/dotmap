@@ -1,4 +1,4 @@
-dotmap <- function(dm, localhost = "http://127.0.0.1", label.region = NA, label.vars = NA) {
+dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label.region = NA, label.vars = NA) {
   region <- readRDS(dm$file_shp_region)
   zmin <- min(dm$z_from)
   zmax <- max(dm$z_to)
@@ -17,10 +17,14 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", label.region = NA, label.
   
   md <- tmap_mode("view")
   
-  if (is.na(label.region)) {
-    tm <- tm_shape(region) + tm_borders()
+  if (show.region) {
+    if (is.na(label.region)) {
+      tm <- tm_shape(region) + tm_borders()
+    } else {
+      tm <- tm_shape(region) + tm_borders(group = label.region)
+    }
   } else {
-    tm <- tm_shape(region) + tm_borders(group = label.region)
+    tm <- tm_layout()
   }
   
   
@@ -29,7 +33,16 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", label.region = NA, label.
     lb <- label.vars[i]
     tm <- tm + tm_tiles(file.path(localhost, nm, "{z}/{x}/{y}.png"), group = lb)
   }
-  tm <- tm + tm_view(set.zoom.limits = c(zmin, zmax))
+  
+  if (show.region) {
+    tm <- tm + tm_view(set.zoom.limits = c(zmin, zmax))
+  } else {
+    bbx <- bb(region, projection = "longlat")
+    lng <- mean(bbx[c(1,3)])
+    lat <- mean(bbx[c(2,4)])
+    tm <- tm + tm_view(bbox = bb(region), set.zoom.limits = c(zmin, zmax))
+  }
+  
   tm
 }
 

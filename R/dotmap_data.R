@@ -5,8 +5,10 @@ check_shape <- function(dir,
   object <- deparse(substitute(shp))
   f <- file.path(dir, "source", paste(object, "rds", sep = "."))
   if (is.null(shp)) {
-    if (!required) return(NULL)
-    if (!file.exists(f)) stop(object, " not found. Either specify it, or save it as ", f)
+    if (!file.exists(f)) {
+      if (required) stop(object, " not found. Either specify it, or save it as ", f)
+      return(NULL)
+    } 
   } else {
     if (inherits(shp, "sf")) {
       shp <- sf::st_geometry(shp)
@@ -103,7 +105,7 @@ dotmap_project <- function(dir,
   #   })
   # }
   
-  
+  if (is.vector(pop_totals)) pop_totals <- data.frame(pop = pop_totals)
   
   ### check region
   region <- readRDS(file_shp_region)
@@ -111,9 +113,10 @@ dotmap_project <- function(dir,
   n <- nrow(pop_totals)
   if (n != length(region)) stop("number of rows in pop_table (", n, ") does not correspond with number of regions in the region shape (", length(region),")")
 
+  
   ### check pop_totals
-  if (!inherits(pop_totals, "data.frame")) stop("pop_totals should be a data.frame")
-  if (ncol(pop_totals) != 2) stop("pop_totals should have two columns: pop and class")
+  if (!inherits(pop_totals, "data.frame")) stop("pop_totals should be a vector or a data.frame")
+  if (!all(names(pop_totals) %in% c("pop", "class")) || !("pop" %in% names(pop_totals))) stop("pop_totals should contain the columns \"pop\" (required) and \"class\" (optional).")
   if (any(is.na(pop_totals))) stop("pop_totals contains NAs")
 
   

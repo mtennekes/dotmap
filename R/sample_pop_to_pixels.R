@@ -70,13 +70,12 @@ sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, pkg, rnd) {
   
   message("sample population to pixels")
   #rmeta$pop
-  
   ais <- list(
     list(rmeta = data.frame(pixels=rmeta$pixels1, pop=rmeta$pop1),
-         pops = pop * (rmeta$pop1 / rmeta$pop),
+         pops = pop * ifelse(rmeta$pop == 0, 0, rmeta$pop1 / rmeta$pop),
          rcol = "region1"),
     list(rmeta = data.frame(pixels=rmeta$pixels2, pop=rmeta$pop2),
-         pops = pop * (rmeta$pop2 / rmeta$pop),
+         pops = pop * ifelse(rmeta$pop == 0, 0, rmeta$pop2 / rmeta$pop),
          rcol = "region2")
   )
   
@@ -87,6 +86,7 @@ sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, pkg, rnd) {
   
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
 
+  
   pop_per_pix <- foreach(i=seti, .combine='+') %do% { 
     devtools::load_all(pkg)
     library(data.table)
