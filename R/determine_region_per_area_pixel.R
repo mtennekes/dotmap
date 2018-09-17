@@ -29,7 +29,6 @@ determine_region_per_area_pixel <- function(dm, i=NULL, j=NULL, logfile=NULL, pk
   useArea2 <- (any(substr(list.files(dir), 1, 5) == "area2"))
 
   cat("useArea2", useArea2, "\n")
-  
   tabs <- foreach(i=seti, .combine='+') %dopar% { 
     devtools::load_all(pkg)
     library(png)

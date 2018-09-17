@@ -30,6 +30,7 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
     return(invisible(NULL))
   }
   
+  
   for (k in 1:nvars) {
     pop_table_name <- names(dm$pop_tables)[k]
     for (i in length(zres):2L) {
@@ -60,6 +61,8 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
   setj <- 1L:ri_arr$ny
   
   s <- f # not sure whether s!=f can happen
+  
+  
   
   for (i in seti) {
     for (j in setj) {
@@ -151,3 +154,4 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
   invisible(NULL)
   
 }
+

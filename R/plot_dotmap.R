@@ -69,8 +69,8 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   
   #dirdotmap <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
 
+
   subset_pop <- !all(setup$sub.pops)
-  #browser()
   foreach(i=seti) %dopar% { 
   #for (i in seti) {
     devtools::load_all(pkg)

@@ -180,7 +180,7 @@ dotmap_project <- function(dir,
   }
 
 
-  z_min <- min(zm)
+  z_min <- min(zm, z_arr)
   z_max <- max(zm)
   
   bbx2 <- tmaptools::bb(rasterInfo(z_min, bbx, pixels=tile_size)$bbx, current.projection="merc", projection = "longlat", ext=.99999999)
