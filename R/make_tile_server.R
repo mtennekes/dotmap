@@ -377,5 +377,5 @@ get_pattern <- function(mx, ts, fact=1) {
   } else {
     circ <- circle_coverage(n=mx, radius=2)
   }
-  patt <- stack_patterns(m=circ, nr=ts * fact, nc=ts * fact)
+  stack_patterns(m=circ, nr=ts * fact, nc=ts * fact)
 }

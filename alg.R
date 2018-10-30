@@ -22,8 +22,10 @@ E(g)$cost <- edgelist$cost
 plot(g, edge.label = E(g)$capacity)
 plot(g, edge.label = E(g)$cost)
 
+# coordinates from 0 to 1
 get_coor <- function(i, j, n) {
-  
+  list(x = (j - .5) / n,
+       y = (i - .5) / n)
 }
 
 
@@ -48,6 +50,7 @@ alg_wouter <- function(M, k = 2) {
   while(min(b) == 0L) {
     cbA <- tabulate(A, nbins = nc) 
     
+    # find class for which class balance is worst
     z <- which.min(sapply(1L:nc, function(i) {
       penalty <- ifelse(i == 1L, .1, 0)
       ((cbA[i] + 1) / cbM[i]) + penalty
@@ -56,6 +59,38 @@ alg_wouter <- function(M, k = 2) {
     
     mv <- as.vector(M)
     
+    ii <- rep(1:n, times = n)
+    jj <- rep(1:n, each = n)
+    
+    colist <- get_coor (ii, jj, n)
+    
+    
+    Mdf <- data.frame(i = ii, j = jj, x = colist$x, y = colist$y, cid = mv, id = 1L:as.integer(n^2))
+    
+    
+    av <- as.vector(A)
+    aii <- rep(1:s, times  = s)
+    ajj <- rep(1:s, each  = s)
+    acolist <- get_coor (aii, ajj, s)
+    
+    Adf <- data.frame(i = aii, j = ajj, x = acolist$x, y = acolist$y, cid = av, id = (as.integer(n^2)+1):(as.integer(n^2) + s^2))
+    
+    
+    iddf <- expand.grid(Mdf$id, Adf$id)
+    
+    
+    
+    
+    for (cl in 1:nc) {
+      Mdfsel <- Mdf %>% filter(cid == cl)
+      Adfsel <- Adf %>% filter(cid == cl)
+      
+      if (nrow(Adfsel) > 0) {
+        Mdfsel2 <- do.call(rbind, lapply(1:nrow(Adfsel), FUN = function(f) Mdfsel))
+      }
+      
+      
+    }
     
   }
   
