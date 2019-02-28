@@ -73,6 +73,8 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
         # })
         H <- H.div[ifelse(n2 < midcol, 1, 2)]
         C <- abs(n2 - midcol) / (midcol-1) * C.max
+      } else {
+        stop("H.method 'seq' other not implemented")
       }
       C.method <- "div"
     }

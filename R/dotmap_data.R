@@ -36,6 +36,7 @@ check_shape <- function(dir,
 #' @param z_arr z_arr
 #' @param tile_size tile_size
 #' @param transparent transparent
+#' @param crs crs
 #' @param settings settings
 #' @export
 #' @import grid
@@ -68,6 +69,7 @@ dotmap_project <- function(dir,
                         z_arr,
                         tile_size=256,
                         transparent=TRUE,
+                        crs,
                         settings
                         #vars
                         ) {
@@ -193,7 +195,7 @@ dotmap_project <- function(dir,
   z_r <- max(z_res)
   
   res <- ri[[paste0("z", z_r)]]
-  bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = "rd")
+  bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = crs)
   tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
   tile_size_px <- c(res$px/res$nx, res$py/res$ny) 
   area_1pix <- prod(tile_size_m / tile_size_px)
