@@ -59,6 +59,9 @@ dotmap_project <- function(dir,
                         area1 = NULL,
                         area2 = NULL,
                         region = NULL,
+                        vars,
+                        var_titles = NULL,
+                        var_labels = NULL,
                         pop_totals,
                         pop_tables,
                         # project,
@@ -122,12 +125,41 @@ dotmap_project <- function(dir,
   if (any(is.na(pop_totals))) stop("pop_totals contains NAs")
 
   
+  
+  ### check var names
+  if (length(pop_tables) != length(vars)) stop("Lengths of vars and pop_tables do not match")
+  if (!is.null(names(pop_tables))) {
+    if (setequal(names(pop_tables), vars)) {
+      pop_tables <- pop_tables[vars]
+    } else stop("names pop_tables do not correspond to vars")
+  } else {
+    names(pop_tables) <- vars
+  }
+  
   ### check pop_tables
   m <- mapply(function(tab, name) {
     if (nrow(tab) != n) stop("number of rows in table ", name, "(", nrow(tab), ") does not correspond to the number of regions (", n, ")")
     if (any(is.na(tab))) stop("table ", name, " contains NAs")
     ncol(tab)
   }, pop_tables, names(pop_tables))
+  
+  ### check titles and labels
+  if (is.null(var_titles)) {
+    var_titles <- vars
+  } else {
+    if (length(var_titles) != length(vars)) stop("var_titles does not have the same length as vars")
+  }
+  
+  if (is.null(var_labels)) {
+    var_labels <- lapply(pop_tables, names)
+  } else {
+    if (!is.list(var_labels)) stop("var_labels should be a list")
+    if (length(var_labels) != length(vars)) stop("var_labels does not have the same length as vars")
+    mapply(function(a, b) {
+      if (length(a) != length(b)) stop("some var_labels have incorrect length: ", paste(a, collapse = ", "), " ---- ", paste(b, collapse = ", "))
+    }, var_labels, pop_tables)
+  }
+  
   
   
   #file_pop <- file.path(project, "source/pop_data.rdata")
@@ -207,12 +239,12 @@ dotmap_project <- function(dir,
   # pix_1km2 <- sapply(area_pix, "[[", 2)
   # bbx <- area_pix[[1]][[3]]
 
-  if (setequal(names(settings), names(pop_tables))) {
-    settings <- lapply(settings, function(s) do.call(dotmap_settings, s))[names(pop_tables)]
+  if (setequal(names(settings), vars)) {
+    settings <- lapply(settings, function(s) do.call(dotmap_settings, s))[vars]
   } else {
     s <- do.call(dotmap_settings, settings)
-    settings <- lapply(names(pop_tables), function(nm) s)
-    names(settings) <- names(pop_tables)
+    settings <- lapply(vars, function(nm) s)
+    names(settings) <- vars
   }
   
   list(bbx_orig=bbx,
@@ -238,6 +270,9 @@ dotmap_project <- function(dir,
        dir_tiles_areas=dir_tiles_areas,
        dir_dotmap_data=dir_dotmap_data,
        dir_htmlserver=dir_htmlserver,
+       vars = vars,
+       var_titles = var_titles,
+       var_labels = var_labels,
        pop_totals = pop_totals,
        pop_tables = pop_tables,
        settings = settings)

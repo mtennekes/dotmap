@@ -20,7 +20,7 @@ plot_dotmap <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
       dmk$z_to <- dmk$z_to[a]
       dmk$z_res <- dmk$z_res[a]
       dmk$resname <- paste0("res", dmk$z_res)
-      dmk$pop_table_name <- names(dmk$pop_tables)[k]
+      dmk$pop_table_name <- dmk$vars[k]
       dmk$settings <- dmk$settings[[k]]
       
       plot_dotmap_i(dmk, i=i, j=j, logfile=logfile, pkg=pkg)

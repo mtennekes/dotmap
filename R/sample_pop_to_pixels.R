@@ -31,7 +31,7 @@ sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE, p
       dmk$resname <- paste0("res", dmk$z_res)
       
       dmk$pop_table <- dmk$pop_tables[[k]]
-      dmk$pop_table_name <- names(dmk$pop_tables)[k]
+      dmk$pop_table_name <- dmk$vars[k]
       dmk$pop_tables <- NULL
       sample_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, pkg=pkg, rnd=rnd)
     }

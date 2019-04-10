@@ -18,7 +18,7 @@ aggregate_lower_zooms <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
       dmk$z_to <- dmk$z_to[a]
       dmk$z_res <- dmk$z_res[a]
       dmk$resname <- paste0("res", dmk$z_res)
-      dmk$pop_table_name <- names(dmk$pop_tables)[k]
+      dmk$pop_table_name <- dmk$vars[k]
       
       if (dmk$z_from < dmk$z_res) aggregate_lower_zooms_one(dmk, i=i, j=j, logfile=logfile, pkg=pkg)
     }

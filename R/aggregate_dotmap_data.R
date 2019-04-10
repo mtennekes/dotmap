@@ -32,7 +32,7 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
   
   
   for (k in 1:nvars) {
-    pop_table_name <- names(dm$pop_tables)[k]
+    pop_table_name <- dm$vars[k]
     for (i in length(zres):2L) {
       zfrom <- zres[i]
       zto <- zres[i-1L]

@@ -10,8 +10,7 @@
 #' @param transparent should the background be transparent? If \code{FALSE}, it will be white.
 #' @param output a subset of: \code{"colors"}, which outputs the color codes, \code{"hcl"}, which outputs the H, C and L parameters, and \code{"rgb"}, which outputs the red, green and blue values.
 #' @return a \code{vector} if \code{output="colors"}, \code{matrix} if \code{all(output %in% c("hcl", "rgb))} and a \code{data.frame} otherwise.
-get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, output=c("colors", "hcl", "rgb"), H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=NA, ...) {
-  
+get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, output=c("colors", "hcl", "rgb"), H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=NA) {
   C.method <- match.arg(C.method)
   L.method <- match.arg(L.method)
   H.method <- match.arg(H.method)
@@ -57,7 +56,12 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
         C[is.na(C)] <- 0
       } else if (ncolx==2) {
         H <- ifelse(n[,1] >= n[,2], H1, H1+180)
-        C <- (2 - (pmax(n[,1], n[,2]) * 2)) * C.max
+        #C <- (2 - (pmax(n[,1], n[,2]) * 2)) * C.max
+        mxs <- pmax(n[,1], n[,2])
+        mns <- pmin(n[,1], n[,2])
+        
+        C <- ((mxs - mns) / mxs) * C.max
+        
       } else {
         H <- H1
         C <- C.max
@@ -103,7 +107,8 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
   }
   
   
-
+  #browser()
+  
   ## manage output
   if (any(c("colors", "rgb") %in% output)) {
     if ((is.na(palette[1]))) {

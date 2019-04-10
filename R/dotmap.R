@@ -4,7 +4,7 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
   zmax <- max(dm$z_to)
   
   
-  nms <- names(dm$pop_tables)
+  nms <- dm$vars
   
   if (is.na(label.vars[1])) {
     label.vars <- nms
@@ -17,23 +17,24 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
   
   md <- tmap_mode("view")
   
-  if (show.region) {
-    if (is.na(label.region)) {
-      tm <- tm_shape(region) + tm_borders()
-    } else {
-      tm <- tm_shape(region) + tm_borders(group = label.region)
-    }
-  } else {
-    tm <- tm_layout()
-  }
-  
+  tm <- tm_layout()
+
   
   for (i in 1:length(nms)) {
     nm <- nms[i]
     lb <- label.vars[i]
     tm <- tm + tm_tiles(file.path(localhost, nm, "{z}/{x}/{y}.png"), group = lb)
   }
+
+  if (show.region) {
+    if (is.na(label.region)) {
+      tm <- tm + tm_shape(region) + tm_borders()
+    } else {
+      tm <- tm + tm_shape(region) + tm_borders(group = label.region)
+    }
+  }
   
+    
   if (show.region) {
     tm <- tm + tm_view(set.zoom.limits = c(zmin, zmax))
   } else {

@@ -13,7 +13,7 @@ make_tile_server <- function(dm, logfile=NULL, pkg="pkg") {
     dmk <- dm
     dmk$m <- dmk$m[k]
     
-    dmk$pop_table_name <- names(dmk$pop_tables)[k]
+    dmk$pop_table_name <- dmk$vars[k]
     
     dmk$dir <- file.path(dmk$dir_htmlserver, dmk$pop_table_name) #dmk$resname, 
     unlink(dmk$dir, recursive = TRUE, force = TRUE)      
