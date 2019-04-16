@@ -227,6 +227,7 @@ dotmap_project <- function(dir,
   z_r <- max(z_res)
   
   res <- ri[[paste0("z", z_r)]]
+  if (missing(crs)) stop("crs missing")
   bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = crs)
   tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
   tile_size_px <- c(res$px/res$nx, res$py/res$ny) 

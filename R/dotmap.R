@@ -1,10 +1,11 @@
-dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label.region = NA, label.vars = NA) {
+dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label.region = NA) {
   region <- readRDS(dm$file_shp_region)
   zmin <- min(dm$z_from)
   zmax <- max(dm$z_to)
   
   
   nms <- dm$vars
+  label.vars <- dm$var_titles
   
   if (is.na(label.vars[1])) {
     label.vars <- nms

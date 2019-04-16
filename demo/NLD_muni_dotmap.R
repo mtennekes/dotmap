@@ -1,28 +1,75 @@
+devtools::load_all("../tmap")
+
+# library(tmap)
+
+data("NLD_muni")
+data("NLD_pop")
+data("NLD_age")
+data("NLD_origin")
+data("NLD_gender")
+
+data("NLD_area1")
+data("NLD_area2")
+
+settings_age <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, palette = rainbow(5), H.method="cat", C.max = 100, C.method = "triangle")
+settings_gender <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, palette = c("blue", "pink"), H.method="cat", C.max = 100, C.method = "triangle")
+settings_origin <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, H.method="cat", C.max = 100, C.method = "triangle")
 
 
-dotmap(NLD_demo)
 
-x <- load("test/NLD_demo/dotmap_data/res10/gender/10/pop_per_pixel_table.rdata")
+NLD_demo <- dotmap_project(dir="test/NLD_demo",
+                           area1 = NLD_area1, 
+                           area2 = NLD_area2,
+                           vars = c("age", "gender", "origin"),
+                           var_titles = c("Age", "Gender", "Origin"),
+                           region = NLD_muni,
+                           pop_totals = NLD_pop,
+                           pop_tables = list(age = NLD_age,
+                                             gender = NLD_gender,
+                                             origin = NLD_origin),
+                           bbx=NA,
+                           z = list(c(7, 7, 9),
+                                    c(9, 10, 11)),
+                           z_arr=9,
+                           crs = 28992,
+                           tile_size=256,
+                           transparent=TRUE,
+                           settings=list(age=settings_age, gender=settings_gender, origin=settings_origin))
 
-x <- load("test/NLD_demo/dotmap_data/res7/age/7/pop_1_7.rdata")
+library(doParallel)
+library(parallel)
+library(foreach)
 
-rmeta <- readRDS("test/NLD_demo/tiles_area/rmeta_pixels.rds")
+cl <- makeCluster(3)
+registerDoParallel(cl)
 
+process_dotmap <- function() {
+  create_area_maps_sf(NLD_demo, pkg = ".")
+  create_area_maps_sf_sec(NLD_demo, pkg = ".")
+  subtract_area_maps(NLD_demo, pkg = ".")
+  create_region_maps(NLD_demo, pkg = ".")
+  determine_region_per_area_pixel(NLD_demo, pkg = ".")
+  sample_pop_to_pixels(NLD_demo, pkg = ".")
+  
+  aggregate_dotmap_data(NLD_demo, pkg = ".", s=4)
+  
+  aggregate_lower_zooms(NLD_demo, pkg = ".")
+  
+  plot_dotmap(NLD_demo, pkg = ".")
+  make_tile_server(NLD_demo, pkg = ".")
+}
 
-stopCluster(cl)
+process_dotmap()
 
+## Make sure XAMPP is installed and running
 
-# sudo /opt/lampp/lampp start
-# sudo /opt/lampp/manager-linux-x64.run
-
-# sudo gedit /etc/apache2/ports.conf      # port 80
-# sudo gedit /etc/apache2/sites-available/000-default.conf  # port 80
-# sudo gedit /opt/lampp/etc/httpd.conf  # DocumentRoot
-
-
+# Ubuntu:
+# - Installation, see http://www.codebind.com/linux-tutorials/install-xampp-ubuntu-18-04/
+# - Open /opt/lampp/etc/httpd.conf and find the DocumentRoot. Change this folder if you like.
+# - Copy files from [project dir]/htmlserver to the DocumentRoot
+# - sudo /opt/lampp/manager-linux-x64.run
+# - start Apache Web Server
 
 dotmap(NLD_demo, label.region = "Municipality borders")
 
-
-
-dotmap(adam, label.region = "Municipality borders", label.vars = c("Household", "Income", "Wood", "Random 4 categories"))
+stopCluster(cl)
