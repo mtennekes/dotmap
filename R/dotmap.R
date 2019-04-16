@@ -17,13 +17,12 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
   
   md <- tmap_mode("view")
   
-  tm <- tm_layout()
-
+  tm <- tm_basemap("Esri.WorldGrayCanvas", group = NULL)
   
   for (i in 1:length(nms)) {
     nm <- nms[i]
     lb <- label.vars[i]
-    tm <- tm + tm_tiles(file.path(localhost, nm, "{z}/{x}/{y}.png"), group = lb)
+    tm <- tm + tm_basemap(file.path(localhost, nm, "{z}/{x}/{y}.png"), group = lb)
   }
 
   if (show.region) {
@@ -43,6 +42,9 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
     lat <- mean(bbx[c(2,4)])
     tm <- tm + tm_view(bbox = bb(region), set.zoom.limits = c(zmin, zmax))
   }
+  lf <- tmap_leaflet(tm)
+  lf %>% leaflet::addLayersControl(baseGroups = nms)
+  
   
   tm
 }
