@@ -36,11 +36,13 @@ Imports:
   fastmatch,
   abind,
   doParallel,
-  entropy
+  entropy,
+  geojsonio,
+  jsonlite
 Suggests:
   testthat,
   covr
 URL: https://github.com/mtennekes/dotmap
 BugReports: https://github.com/mtennekes/dotmap/issues
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

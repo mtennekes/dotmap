@@ -56,27 +56,27 @@ check_shape <- function(dir,
 #' @import foreach
 #' @import entropy 
 dotmap_project <- function(dir,
-                        area1 = NULL,
-                        area2 = NULL,
-                        region = NULL,
-                        vars,
-                        var_titles = NULL,
-                        var_labels = NULL,
-                        pop_totals,
-                        pop_tables,
-                        # project,
-                        dens_ub=NULL,
-                        dens_lb=NULL,
-                        bbx=NA,
-                        z,
-                        z_arr,
-                        tile_size=256,
-                        transparent=TRUE,
-                        crs,
-                        settings
-                        #vars
-                        ) {
-
+                           area1 = NULL,
+                           area2 = NULL,
+                           region = NULL,
+                           vars,
+                           var_titles = NULL,
+                           var_labels = NULL,
+                           pop_totals,
+                           pop_tables,
+                           # project,
+                           dens_ub=NULL,
+                           dens_lb=NULL,
+                           bbx=NA,
+                           z,
+                           z_arr,
+                           tile_size=256,
+                           transparent=TRUE,
+                           crs,
+                           settings
+                           #vars
+) {
+  
   
   dir.create(file.path(dir, "source"), recursive = TRUE, showWarnings = FALSE)
   
@@ -86,7 +86,7 @@ dotmap_project <- function(dir,
   
   
   
-
+  
   # dotmap_data_vars <- function(settings, vars) {
   #   rmeta <- settings$file_region_meta
   #   n <- nrow(rmeta)
@@ -117,13 +117,13 @@ dotmap_project <- function(dir,
   if (!inherits(region, "sfc")) stop(file_shp_region, " is not an sfc object")
   n <- nrow(pop_totals)
   if (n != length(region)) stop("number of rows in pop_table (", n, ") does not correspond with number of regions in the region shape (", length(region),")")
-
+  
   
   ### check pop_totals
   if (!inherits(pop_totals, "data.frame")) stop("pop_totals should be a vector or a data.frame")
   if (!all(names(pop_totals) %in% c("pop", "class")) || !("pop" %in% names(pop_totals))) stop("pop_totals should contain the columns \"pop\" (required) and \"class\" (optional).")
   if (any(is.na(pop_totals))) stop("pop_totals contains NAs")
-
+  
   
   
   ### check var names
@@ -166,9 +166,12 @@ dotmap_project <- function(dir,
   dir_tiles_areas <- file.path(dir, "tiles_area")
   dir_dotmap_data <- file.path(dir, "dotmap_data")
   
+  
+  dir_website <- file.path(dir, "website")
+  
   dir_htmlserver <- file.path(dir, "htmlserver")
   file_lookup <- file.path(dir, "lookup.rdata")
-
+  
   ### check classes and dens_ub and dens_lb  
   hasclass <- "class" %in% names(pop_tables) && !missing(dens_ub) && !missing(dens_lb)
   if (hasclass) {
@@ -206,14 +209,14 @@ dotmap_project <- function(dir,
   
   if (any(z_res > z_to))  stop("incorrect z: for each list item, the first value should be less than or equal to the third value")
   
-
+  
   if (zn > 1) {
     for (i in zn - 1) {
       if (z_to[i] != (z_from[i+1] - 1L)) stop("second number of list item ", i + 1, " should be identical to the third number of list item ", i, " plus one")
     } 
   }
-
-
+  
+  
   z_min <- min(zm, z_arr)
   z_max <- max(zm)
   
@@ -227,8 +230,9 @@ dotmap_project <- function(dir,
   z_r <- max(z_res)
   
   res <- ri[[paste0("z", z_r)]]
+  
   if (missing(crs)) stop("crs missing")
-  bbx <- tmaptools::bb(res$bbx, current.projection = "merc", projection = crs)
+  bbx3 <- tmaptools::bb(res$bbx, current.projection = "merc", projection = crs)
   tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
   tile_size_px <- c(res$px/res$nx, res$py/res$ny) 
   area_1pix <- prod(tile_size_m / tile_size_px)
@@ -239,7 +243,7 @@ dotmap_project <- function(dir,
   # area_1pix <- sapply(area_pix, "[[", 1)
   # pix_1km2 <- sapply(area_pix, "[[", 2)
   # bbx <- area_pix[[1]][[3]]
-
+  
   if (setequal(names(settings), vars)) {
     settings <- lapply(settings, function(s) do.call(dotmap_settings, s))[vars]
   } else {
@@ -248,8 +252,9 @@ dotmap_project <- function(dir,
     names(settings) <- vars
   }
   
-  list(bbx_orig=bbx,
+  list(bbx_orig=bbx3,
        bbx=bbx2,
+       bbx_shp = bbx,
        n=n,
        m=m,
        k=k,
@@ -270,6 +275,7 @@ dotmap_project <- function(dir,
        file_shp_region=file_shp_region,
        dir_tiles_areas=dir_tiles_areas,
        dir_dotmap_data=dir_dotmap_data,
+       dir_website=dir_website,
        dir_htmlserver=dir_htmlserver,
        vars = vars,
        var_titles = var_titles,

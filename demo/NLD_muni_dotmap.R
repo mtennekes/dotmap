@@ -70,6 +70,12 @@ process_dotmap()
 # - sudo /opt/lampp/manager-linux-x64.run
 # - start Apache Web Server
 
-dotmap(NLD_demo, label.region = "Municipality borders")
+dotmap(NLD_demo, localhost = "http://127.0.0.1/NLD", label.region = "Municipality borders")
+
+write_json_data(NLD_demo, localhost = "http://127.0.0.1/NLD")
+
+
 
 stopCluster(cl)
+
+
