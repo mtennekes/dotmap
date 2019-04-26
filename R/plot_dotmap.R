@@ -1,11 +1,12 @@
 #' Plot dotmap
 #' 
 #' @param dm dotmap_meta object
-#' @param delta parameter
-#' @param w parameter
-#' @param ... arguments passed on to get_HCL_colors
+#' @param i rows. By default \code{NULL} which means all rows are taken
+#' @param j colums. By default \code{NULL} which means all columns are taken
+#' @param logfile logfile
 #' @import png
-plot_dotmap <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
+#' @export
+plot_dotmap <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   nvars <- length(dm$m)
   nagg <- length(dm$z_res)
 
@@ -23,12 +24,12 @@ plot_dotmap <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
       dmk$pop_table_name <- dmk$vars[k]
       dmk$settings <- dmk$settings[[k]]
       
-      plot_dotmap_i(dmk, i=i, j=j, logfile=logfile, pkg=pkg)
+      plot_dotmap_i(dmk, i=i, j=j, logfile=logfile)
     }
   }
-  
 }
-plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
+
+plot_dotmap_i <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   
   zmin <- dm$z_from
   
@@ -38,10 +39,8 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
   
   seti <- get_range(i, ri_arr$nx)
   setj <- get_range(j, ri_arr$ny)
-  setz <- if (is.null(z)) {
-    dm$z_res:zmin
-  } else z
-  
+  setz <- dm$z_res:zmin
+
   setz_zoom <- if (dm$z_res < dm$z_arr) {
     (dm$z_res+1):dm$z_arr
   } else NULL
@@ -71,9 +70,9 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, z=NULL, logfile=NULL, pkg="pkg") {
 
 
   subset_pop <- !all(setup$sub.pops)
-  foreach(i=seti) %dopar% { 
+  foreach(i=seti, .packages = c("png", "dotmap")) %dopar% { 
   #for (i in seti) {
-    devtools::load_all(pkg)
+    #devtools::load_all(pkg)
     if (!is.null(logfile)) {
       f <- openLog(logfile)
     }

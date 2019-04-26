@@ -5,7 +5,7 @@
 \title{Sample population to pixels at the highest zoom level}
 \usage{
 sample_pop_to_pixels(dm, i = NULL, j = NULL, logfile = NULL,
-  bound = TRUE, pkg = "pkg")
+  bound = TRUE)
 }
 \arguments{
 \item{dm}{dotmap_info object}
@@ -13,6 +13,10 @@ sample_pop_to_pixels(dm, i = NULL, j = NULL, logfile = NULL,
 \item{i}{tile row. If \code{NULL} (default) all rows are processed}
 
 \item{j}{tile column. If \code{NULL} (default) all columns are processed}
+
+\item{logfile}{logfile}
+
+\item{bound}{logical value that determines whether all dots should be assigned to pixels, even though there are not enough pixels. \code{TRUE} means that the number of dots that are samples is bounded by the number of pixels.}
 }
 \description{
 Sample population to pixels at the highest zoom level

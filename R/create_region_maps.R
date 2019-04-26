@@ -3,8 +3,11 @@
 #' Create maps of the regions at the resolution of specific zoom level, divided in tiles according to the arrangement of a lower zoom level.
 #' 
 #' @param dm dotmap_meta object
+#' @param i rows. By default \code{NULL} which means all rows are taken
+#' @param j colums. By default \code{NULL} which means all columns are taken
+#' @param logfile logfile
 #' @export
-create_region_maps <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
+create_region_maps <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   region <- NULL
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
@@ -39,9 +42,9 @@ create_region_maps <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
     b[1] + a * (b[2] - b[1])
   }
   
-  foreach(i=seti) %dopar% { 
-    devtools::load_all(pkg)
-    library(tmap)
+  foreach(i=seti, .packages = c("tmap", "dotmap")) %dopar% { 
+    #devtools::load_all(pkg)
+    #library(tmap)
     if (!is.null(logfile)) {
       f <- openLog(logfile)
     }

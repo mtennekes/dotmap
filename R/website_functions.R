@@ -2,10 +2,9 @@ js_write <- function(objects, vars, file) {
   #fs <- letters[1:length(objects)]
   
   tmp <- tempfile()
-  
   lns <- unlist(mapply(function(o, v) {
     if (inherits(o, c("sf", "sfc"))) {
-      geojson_write(o, file = tmp)    
+      suppressMessages(geojsonio::geojson_write(o, file = tmp))
       lns <- suppressWarnings(readLines(tmp))
       unlink(tmp)
     } else {
@@ -24,15 +23,16 @@ js_write <- function(objects, vars, file) {
 
 
 
-#' Write json data to website
+#' Create dotmap website
 #' 
-#' Write json data to website
+#' Create dotmap website
 #' 
 #' @param dm dm
 #' @param localhost localhost
-#' @import geojsonio
-#' @import jsonlite
-write_json_data <- function(dm, localhost) {
+#' @importFrom  geojsonio geojson_write
+#' @importFrom jsonlite toJSON
+#' @export
+create_dotmap_website <- function(dm, localhost) {
   wdir <- dm$dir_website
   unlink(wdir)
   dir.create(wdir, showWarnings = FALSE)
@@ -67,12 +67,27 @@ write_json_data <- function(dm, localhost) {
                    zmax = zmax,
                    zcurrent = zcurrent)
   
+  titles <- list(title = dm$title,
+                 region_title = dm$region_title,
+                 labels_title = dm$labels_title)
   
   
+  dots_text_ids <- unlist(lapply(1:length(dm$z_from), function(k) {
+    rep(k, (dm$z_to[k] - dm$z_from[k]) + 1)
+  }))
+  
+  dots_text <- as.list(dm$dots_text[dots_text_ids])
+  names(dots_text) <- paste0("z", zmin:zmax)
+  
+  dotmap_attr <- dm$dotmap_attr
+
   meta <- unname(mapply(name = dm$vars, label = dm$var_titles, levels = dm$var_labels, is_div = rep(TRUE, length(dm$vars)), list, SIMPLIFY = FALSE))
-  js_write(list(shp, meta, settings, localhost), c("shp", "meta", "settings", "localhost"), file.path(wdir, "index_files/vars.js")) 
+  js_write(list(shp, meta, settings, titles, dots_text, dotmap_attr, localhost), c("shp", "meta", "settings", "titles", "dots_text", "dotmap_attr", "localhost"), file.path(wdir, "index_files/vars.js")) 
   
   create_icons(dm, 16, 4)
+  
+  message("Dotmap website created at ", wdir)
+  invisible(NULL)
 }
 
 

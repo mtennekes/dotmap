@@ -6,24 +6,41 @@
 \usage{
 get_HCL_colors(m, H1 = 0, L.lim = c(80, 20), L.delta = 0.65,
   L.w = 10, zf = 0, C.max = 100, transparent = FALSE,
-  output = c("colors", "hcl", "rgb"), H.method = c("cat", "div",
-  "seq"), H.div = c(240, 20), L.method = c("v1", "v2"),
-  C.method = c("triangle", "entropy"), palette = NA)
+  H.method = c("cat", "div", "seq"), H.div = c(240, 20),
+  L.method = c("v1", "v2"), C.method = c("triangle", "entropy"),
+  palette = NA, output = c("colors", "hcl", "rgb"))
 }
 \arguments{
+\item{m}{matrix of counts, rows are the cases, columns are the groups. Number of columns should be at most three.}
+
 \item{H1}{hue value of first subpopulation}
 
 \item{L.lim}{limits of the luminance, corresponds to pop.lim}
+
+\item{L.delta}{L.delta}
+
+\item{L.w}{L.w}
+
+\item{zf}{zf}
 
 \item{C.max}{maximum chroma}
 
 \item{transparent}{should the background be transparent? If \code{FALSE}, it will be white.}
 
+\item{H.method}{H.method}
+
+\item{H.div}{H.div}
+
+\item{L.method}{L.method}
+
+\item{C.method}{C.method}
+
+\item{palette}{palette}
+
 \item{output}{a subset of: \code{"colors"}, which outputs the color codes, \code{"hcl"}, which outputs the H, C and L parameters, and \code{"rgb"}, which outputs the red, green and blue values.}
-
-\item{x}{matrix of counts, rows are the cases, columns are the groups. Number of columns should be at most three.}
-
-\item{pop.lim}{limits of the population number per pixel, corresponds to L.lim}
+}
+\value{
+a \code{vector} if \code{output == "colors"}, \code{matrix} if \code{output == "hcl"} or \code{output == "rgb"}, and a \code{data.frame} otherwise.
 }
 \description{
 Derive colors from the HCL color space based on triples of values. The H and C are

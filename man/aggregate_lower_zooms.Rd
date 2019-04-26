@@ -4,8 +4,7 @@
 \alias{aggregate_lower_zooms}
 \title{Aggregate population totales per pixel for lower zoom levels}
 \usage{
-aggregate_lower_zooms(dm, i = NULL, j = NULL, logfile = NULL,
-  pkg = "pkg")
+aggregate_lower_zooms(dm, i = NULL, j = NULL, logfile = NULL)
 }
 \arguments{
 \item{dm}{dotmap_meta object}
@@ -13,6 +12,8 @@ aggregate_lower_zooms(dm, i = NULL, j = NULL, logfile = NULL,
 \item{i}{tile row. If \code{NULL} (default) all rows are processed}
 
 \item{j}{tile column. If \code{NULL} (default) all columns are processed}
+
+\item{logfile}{logflie}
 }
 \description{
 Aggregate population totales per pixel for lower zoom levels

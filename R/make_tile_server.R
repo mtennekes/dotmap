@@ -2,10 +2,12 @@
 #' 
 #' Make tile server from dotmap tiles that were created with plot_dotmap. The tiles are split to \code{dm$tile_size} by \code{dm$tile_size} bitmap images, and arranged according to the standard convention implemented in the Google Maps API.
 #' @param dm dotmap_meta object
+#' @param logfile logfile
 #' @export
 #' @import png
-#' @' @seealso \url{http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/}
-make_tile_server <- function(dm, logfile=NULL, pkg="pkg") {
+#' @export
+#' @seealso \url{http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/}
+make_tile_server <- function(dm, logfile=NULL) {
   nvars <- length(dm$m)
   nagg <- length(dm$z_res)
   
@@ -23,14 +25,14 @@ make_tile_server <- function(dm, logfile=NULL, pkg="pkg") {
       dmk$z_to <- dm$z_to[a]
       dmk$z_res <- dm$z_res[a]
       dmk$resname <- paste0("res", dmk$z_res)
-      make_tile_server_i(dmk, logfile=logfile, pkg=pkg)
+      make_tile_server_i(dmk, logfile=logfile)
     }
     
   }
   
 }
 
-make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
+make_tile_server_i <- function(dm, logfile=NULL) {
   
   zmin <- dm$z_from
   zmax <- dm$z_to
@@ -72,7 +74,7 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
     for (i in 1:ri_arr$nx) {
     #foreach(i=1:ri_arr$nx) %dopar% { 
-      devtools::load_all(pkg)
+      #devtools::load_all(pkg)
       if (!is.null(logfile)) {
         #logfile <- paste0(substr(logfile, 1, nchar(logfile)-4), Sys.getpid(), ".txt")
         f <- openLog(logfile)
@@ -241,7 +243,7 @@ make_tile_server_i <- function(dm, logfile=NULL, pkg="pkg") {
     #browser()
     #foreach(i=1:ri_arr$nx) %dopar% { 
     for (i in 1:ri_arr$nx) {
-      devtools::load_all(pkg)
+      #devtools::load_all(pkg)
       if (!is.null(logfile)) {
         #logfile <- paste0(substr(logfile, 1, nchar(logfile)-4), Sys.getpid(), ".txt")
         f <- openLog(logfile)

@@ -1,4 +1,12 @@
-dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label.region = NA) {
+#' Show dotmap
+#' 
+#' Show dotmap
+#' 
+#' @param dm dm
+#' @param localhost localhost
+#' @param show.region show.region
+#' @export
+show_dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE) {
   region <- readRDS(dm$file_shp_region)
   zmin <- min(dm$z_from)
   zmax <- max(dm$z_to)
@@ -27,11 +35,7 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
   }
 
   if (show.region) {
-    if (is.na(label.region)) {
-      tm <- tm + tm_shape(region) + tm_borders()
-    } else {
-      tm <- tm + tm_shape(region) + tm_borders(group = label.region)
-    }
+    tm <- tm + tm_shape(region) + tm_borders(group = dm$region_title)
   }
   
     
@@ -43,10 +47,7 @@ dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE, label
     lat <- mean(bbx[c(2,4)])
     tm <- tm + tm_view(bbox = bb(region), set.zoom.limits = c(zmin, zmax))
   }
-  lf <- tmap_leaflet(tm)
-  lf %>% leaflet::addLayersControl(baseGroups = nms)
-  
-  
+
   tm
 }
 

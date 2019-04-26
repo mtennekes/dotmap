@@ -38,7 +38,9 @@ Imports:
   doParallel,
   entropy,
   geojsonio,
-  jsonlite
+  jsonlite,
+  KernSmooth,
+  abind
 Suggests:
   testthat,
   covr

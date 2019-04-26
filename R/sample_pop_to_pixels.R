@@ -3,7 +3,10 @@
 #' @param dm dotmap_info object
 #' @param i tile row. If \code{NULL} (default) all rows are processed
 #' @param j tile column. If \code{NULL} (default) all columns are processed
-sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE, pkg="pkg") {
+#' @param logfile logfile
+#' @param bound logical value that determines whether all dots should be assigned to pixels, even though there are not enough pixels. \code{TRUE} means that the number of dots that are samples is bounded by the number of pixels.
+#' @export
+sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE) {
   rmeta <- readRDS(file.path(dm$dir_tiles_areas, "rmeta_pixels.rds"))
   
   nvars <- length(dm$m)
@@ -33,7 +36,7 @@ sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE, p
       dmk$pop_table <- dmk$pop_tables[[k]]
       dmk$pop_table_name <- dmk$vars[k]
       dmk$pop_tables <- NULL
-      sample_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, pkg=pkg, rnd=rnd)
+      sample_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, rnd=rnd)
     }
   #}
 }
@@ -50,7 +53,7 @@ random_seq <- function(res) {
   c(rnd, rnd_missings)
 }
 
-sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, pkg, rnd) {
+sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, rnd) {
   
   
   #load(file.path(dm$file_pop))
@@ -87,9 +90,9 @@ sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, pkg, rnd) {
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
 
   
-  pop_per_pix <- foreach(i=seti, .combine='+') %do% { 
-    devtools::load_all(pkg)
-    library(data.table)
+  pop_per_pix <- foreach(i=seti, .combine='+', .packages = c("dotmap", "data.table")) %dopar% { 
+    #devtools::load_all(pkg)
+    #library(data.table)
     if (!is.null(logfile)) {
       f <- openLog(logfile)
     }

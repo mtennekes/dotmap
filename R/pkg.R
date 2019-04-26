@@ -23,9 +23,30 @@ NULL
 #' @docType data
 NULL
 
-
 #' @usage data(NLD_area2)
 #' @name NLD_area2
 #' @rdname Shapes
+#' @docType data
+NULL
+
+#' Population tables
+#' 
+#' Population tables for age, gender, and origin.
+#' 
+#' @usage data(NLD_age)
+#' @name NLD_age
+#' @rdname PopulationTables
+#' @docType data
+NULL
+
+#' @usage data(NLD_gender)
+#' @name NLD_gender
+#' @rdname PopulationTables
+#' @docType data
+NULL
+
+#' @usage data(NLD_origin)
+#' @name NLD_origin
+#' @rdname PopulationTables
 #' @docType data
 NULL

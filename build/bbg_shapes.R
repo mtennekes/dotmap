@@ -116,7 +116,7 @@ NLD_age <- NLD_muni %>%
 all(rowSums(NLD_age) == NLD_pop$pop)
 
 
-save(NLD_pop, file = "data/NLD_pop.rda", compress = "xz")
+#save(NLD_pop, file = "data/NLD_pop.rda", compress = "xz")
 save(NLD_origin, file = "data/NLD_origin.rda", compress = "xz")
 save(NLD_gender, file = "data/NLD_gender.rda", compress = "xz")
 save(NLD_age, file = "data/NLD_age.rda", compress = "xz")

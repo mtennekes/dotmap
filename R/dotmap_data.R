@@ -27,6 +27,9 @@ check_shape <- function(dir,
 #' @param area1 area1
 #' @param area2 area2
 #' @param region region
+#' @param vars vars
+#' @param var_titles var_titles
+#' @param var_labels var_labels
 #' @param pop_totals pop_totals
 #' @param pop_tables pop_tables
 #' @param dens_ub dens_ub
@@ -38,6 +41,11 @@ check_shape <- function(dir,
 #' @param transparent transparent
 #' @param crs crs
 #' @param settings settings
+#' @param title titles
+#' @param region_title region_title
+#' @param labels_title labels_title
+#' @param dots_text dots_text
+#' @param dotmap_attr dotmap_attr
 #' @export
 #' @import grid
 #' @import png
@@ -62,9 +70,8 @@ dotmap_project <- function(dir,
                            vars,
                            var_titles = NULL,
                            var_labels = NULL,
-                           pop_totals,
+                           pop_totals = NULL,
                            pop_tables,
-                           # project,
                            dens_ub=NULL,
                            dens_lb=NULL,
                            bbx=NA,
@@ -73,9 +80,12 @@ dotmap_project <- function(dir,
                            tile_size=256,
                            transparent=TRUE,
                            crs,
-                           settings
-                           #vars
-) {
+                           settings,
+                           title = "Dotmap",
+                           region_title = "Borders",
+                           labels_title = "Labels",
+                           dots_text = "",
+                           dotmap_attr = "") {
   
   
   dir.create(file.path(dir, "source"), recursive = TRUE, showWarnings = FALSE)
@@ -110,20 +120,21 @@ dotmap_project <- function(dir,
   #   })
   # }
   
+  
+  
+  
+  ### check pop_totals
+  if (is.null(pop_totals)) pop_totals <- unname(rowSums(pop_tables[[1]]))
   if (is.vector(pop_totals)) pop_totals <- data.frame(pop = pop_totals)
+  if (!inherits(pop_totals, "data.frame")) stop("pop_totals should be a vector or a data.frame")
+  if (!all(names(pop_totals) %in% c("pop", "class")) || !("pop" %in% names(pop_totals))) stop("pop_totals should contain the columns \"pop\" (required) and \"class\" (optional).")
+  if (any(is.na(pop_totals))) stop("pop_totals contains NAs")
   
   ### check region
   region <- readRDS(file_shp_region)
   if (!inherits(region, "sfc")) stop(file_shp_region, " is not an sfc object")
   n <- nrow(pop_totals)
   if (n != length(region)) stop("number of rows in pop_table (", n, ") does not correspond with number of regions in the region shape (", length(region),")")
-  
-  
-  ### check pop_totals
-  if (!inherits(pop_totals, "data.frame")) stop("pop_totals should be a vector or a data.frame")
-  if (!all(names(pop_totals) %in% c("pop", "class")) || !("pop" %in% names(pop_totals))) stop("pop_totals should contain the columns \"pop\" (required) and \"class\" (optional).")
-  if (any(is.na(pop_totals))) stop("pop_totals contains NAs")
-  
   
   
   ### check var names
@@ -224,6 +235,8 @@ dotmap_project <- function(dir,
   
   ri <- rasterInfo(zoom=z_min:z_max, bbx2, pixels = tile_size)
   
+  dots_text <- rep(dots_text, length.out=zn)
+  
   # approximate persons per km2
   
   #area_pix <- lapply(z_res, function(z_r) {
@@ -282,7 +295,12 @@ dotmap_project <- function(dir,
        var_labels = var_labels,
        pop_totals = pop_totals,
        pop_tables = pop_tables,
-       settings = settings)
+       settings = settings,
+       title = title,
+       region_title = region_title,
+       labels_title = labels_title,
+       dots_text = dots_text,
+       dotmap_attr = dotmap_attr)
 }
 
 

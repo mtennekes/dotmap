@@ -4,11 +4,16 @@
 \alias{make_tile_server}
 \title{Make tile server}
 \usage{
-make_tile_server(dm, logfile = NULL, pkg = "pkg")
+make_tile_server(dm, logfile = NULL)
 }
 \arguments{
 \item{dm}{dotmap_meta object}
+
+\item{logfile}{logfile}
 }
 \description{
 Make tile server from dotmap tiles that were created with plot_dotmap. The tiles are split to \code{dm$tile_size} by \code{dm$tile_size} bitmap images, and arranged according to the standard convention implemented in the Google Maps API.
+}
+\seealso{
+\url{http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/}
 }

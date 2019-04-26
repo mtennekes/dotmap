@@ -3,7 +3,9 @@
 #' @param dm dotmap_meta object
 #' @param i tile row. If \code{NULL} (default) all rows are processed
 #' @param j tile column. If \code{NULL} (default) all columns are processed
-aggregate_lower_zooms <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
+#' @param logfile logflie
+#' @export
+aggregate_lower_zooms <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   
   
   nvars <- length(dm$m)
@@ -20,13 +22,13 @@ aggregate_lower_zooms <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
       dmk$resname <- paste0("res", dmk$z_res)
       dmk$pop_table_name <- dmk$vars[k]
       
-      if (dmk$z_from < dmk$z_res) aggregate_lower_zooms_one(dmk, i=i, j=j, logfile=logfile, pkg=pkg)
+      if (dmk$z_from < dmk$z_res) aggregate_lower_zooms_one(dmk, i=i, j=j, logfile=logfile)
     }
   }
 }
 
 
-aggregate_lower_zooms_one <- function(dm, i, j, logfile, pkg="pkg") {
+aggregate_lower_zooms_one <- function(dm, i, j, logfile) {
   
   zmin <- dm$z_from
   
@@ -46,8 +48,8 @@ aggregate_lower_zooms_one <- function(dm, i, j, logfile, pkg="pkg") {
   
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   
-  pop_per_pix_matrix <- foreach(i=seti, .combine='+') %do% { 
-    devtools::load_all(pkg)
+  pop_per_pix_matrix <- foreach(i=seti, .combine='+', .packages = "dotmap") %dopar% { 
+    #devtools::load_all(pkg)
     pop_per_pix_matrix <- matrix(0L, nrow=1001, ncol=dm$z_res-zmin)  
     if (!is.null(logfile)) {
       f <- openLog(logfile)

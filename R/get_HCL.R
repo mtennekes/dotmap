@@ -2,15 +2,22 @@
 #' 
 #' Derive colors from the HCL color space based on triples of values. The H and C are 
 #' 
-#' @param x matrix of counts, rows are the cases, columns are the groups. Number of columns should be at most three.
+#' @param m matrix of counts, rows are the cases, columns are the groups. Number of columns should be at most three.
 #' @param H1 hue value of first subpopulation
 #' @param L.lim limits of the luminance, corresponds to pop.lim
-#' @param pop.lim limits of the population number per pixel, corresponds to L.lim
+#' @param L.delta L.delta
+#' @param L.w L.w
+#' @param zf zf
 #' @param C.max maximum chroma
 #' @param transparent should the background be transparent? If \code{FALSE}, it will be white.
+#' @param H.method H.method
+#' @param H.div H.div
+#' @param L.method L.method
+#' @param C.method C.method
+#' @param palette palette
 #' @param output a subset of: \code{"colors"}, which outputs the color codes, \code{"hcl"}, which outputs the H, C and L parameters, and \code{"rgb"}, which outputs the red, green and blue values.
-#' @return a \code{vector} if \code{output="colors"}, \code{matrix} if \code{all(output %in% c("hcl", "rgb))} and a \code{data.frame} otherwise.
-get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, output=c("colors", "hcl", "rgb"), H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=NA) {
+#' @return a \code{vector} if \code{output == "colors"}, \code{matrix} if \code{output == "hcl"} or \code{output == "rgb"}, and a \code{data.frame} otherwise.
+get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0, C.max=100, transparent=FALSE, H.method=c("cat", "div", "seq"), H.div=c(240, 20), L.method=c("v1", "v2"), C.method=c("triangle", "entropy"), palette=NA, output=c("colors", "hcl", "rgb")) {
   C.method <- match.arg(C.method)
   L.method <- match.arg(L.method)
   H.method <- match.arg(H.method)

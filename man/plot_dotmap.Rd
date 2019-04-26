@@ -4,17 +4,16 @@
 \alias{plot_dotmap}
 \title{Plot dotmap}
 \usage{
-plot_dotmap(dm, i = NULL, j = NULL, z = NULL, logfile = NULL,
-  pkg = "pkg")
+plot_dotmap(dm, i = NULL, j = NULL, logfile = NULL)
 }
 \arguments{
 \item{dm}{dotmap_meta object}
 
-\item{delta}{parameter}
+\item{i}{rows. By default \code{NULL} which means all rows are taken}
 
-\item{w}{parameter}
+\item{j}{colums. By default \code{NULL} which means all columns are taken}
 
-\item{...}{arguments passed on to get_HCL_colors}
+\item{logfile}{logfile}
 }
 \description{
 Plot dotmap

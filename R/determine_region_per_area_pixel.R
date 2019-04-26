@@ -6,10 +6,9 @@
 #' @param i tile row. If \code{NULL} (default) all rows are processed
 #' @param j tile column. If \code{NULL} (default) all columns are processed
 #' @param logfile logfile
-#' @param dens_ub upperbound of the density per class (e.g. urbanization level)
-#' @param dens_lb lowerbound of the density per class (e.g. urbanization level)
+#' @export
 #' @import png
-determine_region_per_area_pixel <- function(dm, i=NULL, j=NULL, logfile=NULL, pkg="pkg") {
+determine_region_per_area_pixel <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   message("Determine region per area pixel")
   
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
@@ -29,9 +28,9 @@ determine_region_per_area_pixel <- function(dm, i=NULL, j=NULL, logfile=NULL, pk
   useArea2 <- (any(substr(list.files(dir), 1, 5) == "area2"))
 
   cat("useArea2", useArea2, "\n")
-  tabs <- foreach(i=seti, .combine='+') %dopar% { 
-    devtools::load_all(pkg)
-    library(png)
+  tabs <- foreach(i=seti, .combine='+', .packages = c("png", "dotmap")) %dopar% { 
+    #devtools::load_all(pkg)
+    #library(png)
     if (!is.null(logfile)) {
       f <- openLog(logfile)
     }

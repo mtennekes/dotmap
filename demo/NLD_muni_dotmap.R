@@ -3,7 +3,6 @@ devtools::load_all("../tmap")
 # library(tmap)
 
 data("NLD_muni")
-data("NLD_pop")
 data("NLD_age")
 data("NLD_origin")
 data("NLD_gender")
@@ -23,7 +22,11 @@ NLD_demo <- dotmap_project(dir="test/NLD_demo",
                            vars = c("age", "gender", "origin"),
                            var_titles = c("Age", "Gender", "Origin"),
                            region = NLD_muni,
-                           pop_totals = NLD_pop,
+                           title = "Dutch Municipality Dotmap",
+                           region_title = "Municipality borders",
+                           labels_title = "Labels",
+                           dots_text = c("1 dot = 16000 persons", "1 dot = 1000 persons"),
+                           dotmap_attr = "&copy; <a href='https://www.cbs.nl'>CBS</a>",
                            pop_tables = list(age = NLD_age,
                                              gender = NLD_gender,
                                              origin = NLD_origin),
@@ -44,19 +47,19 @@ cl <- makeCluster(3)
 registerDoParallel(cl)
 
 process_dotmap <- function() {
-  create_area_maps_sf(NLD_demo, pkg = ".")
-  create_area_maps_sf_sec(NLD_demo, pkg = ".")
-  subtract_area_maps(NLD_demo, pkg = ".")
-  create_region_maps(NLD_demo, pkg = ".")
-  determine_region_per_area_pixel(NLD_demo, pkg = ".")
-  sample_pop_to_pixels(NLD_demo, pkg = ".")
+  #create_area_maps(NLD_demo, pkg = ".")
+  create_area_maps(NLD_demo, primary = FALSE)
+  dotmap:::subtract_area_maps(NLD_demo)
+  create_region_maps(NLD_demo)
+  dotmap:::determine_region_per_area_pixel(NLD_demo)
+  dotmap:::sample_pop_to_pixels(NLD_demo)
   
-  aggregate_dotmap_data(NLD_demo, pkg = ".", s=4)
+  dotmap:::aggregate_dotmap_data(NLD_demo, s=4)
   
-  aggregate_lower_zooms(NLD_demo, pkg = ".")
+  dotmap:::aggregate_lower_zooms(NLD_demo)
   
-  plot_dotmap(NLD_demo, pkg = ".")
-  make_tile_server(NLD_demo, pkg = ".")
+  dotmap:::plot_dotmap(NLD_demo)
+  dotmap:::make_tile_server(NLD_demo)
 }
 
 process_dotmap()
@@ -70,9 +73,9 @@ process_dotmap()
 # - sudo /opt/lampp/manager-linux-x64.run
 # - start Apache Web Server
 
-dotmap(NLD_demo, localhost = "http://127.0.0.1/NLD", label.region = "Municipality borders")
+show_dotmap(NLD_demo, localhost = "http://127.0.0.1/NLD")
 
-write_json_data(NLD_demo, localhost = "http://127.0.0.1/NLD")
+create_dotmap_website(NLD_demo, localhost = "http://127.0.0.1/NLD")
 
 
 

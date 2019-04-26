@@ -6,25 +6,21 @@ matrix_to_row_col <- function(m) {
   as.matrix(data.frame(row=rs, col=cs))
 }
 
-
-aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
-  require(KernSmooth)
-  require(abind)
-  # require(plotly)
-  # require(igraph)
-  # require(maxmatching)
-  # require(Matrix.utils)
-  
+#' Aggregate dotmap data
+#' 
+#' Aggregate dotmap data
+#' 
+#' @param dm dm
+#' @param s s
+#' @import KernSmooth
+#' @import abind
+#' @export
+aggregate_dotmap_data <- function(dm, s=4) {
   set.seed(12345)
   
- 
-  #dm1, dm2, zfrom, zto
-  
-
   zres <- dm$z_res
   nvars <- length(dm$m)
-  
-  
+
   if (length(zres) == 1) {
     warning("Nothing to aggregate")
     return(invisible(NULL))
@@ -44,7 +40,7 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
       f <- 2^(zfrom-zto)
       ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
       
-      aggregate_dotmap_data_i(dir1=dir1, dir2=dir2, ri_arr=ri_arr, pkg=pkg, f=f)
+      aggregate_dotmap_data_i(dir1=dir1, dir2=dir2, ri_arr=ri_arr, f=f)
     }
   }
   
@@ -52,7 +48,7 @@ aggregate_dotmap_data <- function(dm, pkg="pkg", s=4) {
 }
 
 
-aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, pkg="pkg", f) {
+aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f) {
   
 
 

@@ -5,9 +5,11 @@
 \title{Create dotmap project}
 \usage{
 dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
-  var_titles = NULL, var_labels = NULL, pop_totals, pop_tables,
-  dens_ub = NULL, dens_lb = NULL, bbx = NA, z, z_arr,
-  tile_size = 256, transparent = TRUE, crs, settings)
+  var_titles = NULL, var_labels = NULL, pop_totals = NULL,
+  pop_tables, dens_ub = NULL, dens_lb = NULL, bbx = NA, z, z_arr,
+  tile_size = 256, transparent = TRUE, crs, settings,
+  title = "Dotmap", region_title = "Borders",
+  labels_title = "Labels", dots_text = "", dotmap_attr = "")
 }
 \arguments{
 \item{dir}{dir}
@@ -17,6 +19,12 @@ dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
 \item{area2}{area2}
 
 \item{region}{region}
+
+\item{vars}{vars}
+
+\item{var_titles}{var_titles}
+
+\item{var_labels}{var_labels}
 
 \item{pop_totals}{pop_totals}
 
@@ -39,6 +47,16 @@ dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
 \item{crs}{crs}
 
 \item{settings}{settings}
+
+\item{title}{titles}
+
+\item{region_title}{region_title}
+
+\item{labels_title}{labels_title}
+
+\item{dots_text}{dots_text}
+
+\item{dotmap_attr}{dotmap_attr}
 }
 \description{
 Create dotmap project

@@ -7,7 +7,6 @@
 #' @param j tile column. If \code{NULL} (default) all columns are processed
 #' @param primary plot primary areas (\code{"area1"}), or secundary (\code{"area2"})?
 #' @param logfile logfile
-#' @param pkg pkg
 #' @import grid
 #' @import png
 #' @import tmap
@@ -23,8 +22,9 @@
 #' @import parallel
 #' @import foreach
 #' @import entropy 
+#' @rdname create_area_maps
 #' @export
-create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, pkg="pkg") {
+create_area_maps <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL) {
   area1 <- area2 <- NULL
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
@@ -50,8 +50,8 @@ create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, 
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   openLog <- openLog; closeLog <- closeLog
   
-  foreach(i=seti) %dopar% { 
-    devtools::load_all(pkg)
+  foreach(i=seti, .packages = c("dotmap", "tmap", "tmaptools")) %dopar% { 
+    #devtools::load_all(pkg)
 
     if (!is.null(logfile)) {
       f <- openLog(logfile)
@@ -100,11 +100,17 @@ create_area_maps_sf <- function(dm, i=NULL, j=NULL, primary=TRUE, logfile=NULL, 
   invisible()
 }
 
-create_area_maps_sf_sec <- function(dm, i=NULL, j=NULL, primary=FALSE, logfile=NULL, pkg="pkg") {
-  create_area_maps_sf(dm=dm, i=i, j=j, primary=primary, logfile=logfile, pkg=pkg)
+#' @name create_area_maps_sec
+#' @rdname create_area_maps
+create_area_maps_sec <- function(dm, i=NULL, j=NULL, primary=FALSE, logfile=NULL) {
+  create_area_maps(dm=dm, i=i, j=j, primary=primary, logfile=logfile)
 }
 
-subtract_area_maps <- function(dm, i=NULL, j=NULL, f1="area1", f2="area2", logfile=NULL, pkg="pkg") {
+#' @name subtract_area_maps
+#' @rdname create_area_maps
+subtract_area_maps <- function(dm, i=NULL, j=NULL, logfile=NULL) {
+  f1 <- "area1"
+  f2 <- "area2"
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   ri_res <- dm$ri[[paste0("z", max(dm$z_res))]]
   
@@ -114,8 +120,8 @@ subtract_area_maps <- function(dm, i=NULL, j=NULL, f1="area1", f2="area2", logfi
   if (!is.null(logfile)) if (!file.exists(logfile)) writeLines(c(""), logfile)
   openLog <- openLog; closeLog <- closeLog
   
-  foreach(i=seti) %dopar% { 
-    devtools::load_all(pkg)
+  foreach(i=seti, .packages = "dotmap") %dopar% { 
+    #devtools::load_all(pkg)
     for (j in setj) {
       a1 <- png::readPNG(file.path(dm$dir_tiles_areas, paste0(f1, "_", i , "_", j, ".png")))
       a2 <- png::readPNG(file.path(dm$dir_tiles_areas, paste0(f2, "_", i , "_", j, ".png")))

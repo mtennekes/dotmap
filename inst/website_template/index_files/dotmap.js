@@ -13,9 +13,12 @@ function getCheckedBoxes(chkboxName) {
   return checkboxesChecked.map(function(i) {return i.value;});
 }
 
-console.log(settings);
+document.getElementsByTagName("title")[0].innerHTML = titles.title;
 
-console.log(localhost);
+function refreshText() {
+  var z = map.getZoom();
+  document.getElementById("dotstext").innerHTML = "<strong>" + dots_text["z" + z] + "</strong>";
+}
 
 function changeLayers(layer) {
 	var id = getCheckedBoxes("layeritems")[0][5];
@@ -29,18 +32,21 @@ function changeLayers(layer) {
   //dotmap.setUrl('http://research.cbs.nl/colordotmap/tiles_adam_' + name + '/{z}/{x}/{y}.png');
   dotmap.setUrl(localhost + "/" + name + '/{z}/{x}/{y}.png');
 	
+	var z = map.getZoom();
 	
   //document.getElementById("dotmapLegend").innerHTML = <div id = "leg2a" style = "display:block">
 	
   div = document.getElementById("dotmapLegend");
-	  
-  div.innerHTML="<div style = 'display:block'><div class = 'legendtitle'><strong>" + label + "</strong></div></div>";
+	
+	var txt = "<div style = 'display:block'><div class = 'legendtitle'><strong>" + label + "</strong></div></div>";
 	
 	for(var i=0; i <levels.length; i++){
-		div.innerHTML+="<div><img class='legimage1' src='index_files/icons/icon_" + name + "_" + (i + 1) + ".png'/><span class = 'cel0'> " + levels[i] + "</span></div>";
+		txt+="<div><img class='legimage1' src='index_files/icons/icon_" + name + "_" + (i + 1) + ".png'/><span class = 'cel0'> " + levels[i] + "</span></div>";
 	}
 	
-	  
+	txt+="<p class='onedpp' id='dotstext'><strong>" + dots_text["z" + z] + "</strong></p>";
+	
+	div.innerHTML = txt;  
 	  
 //for (i = 0; i < levels.length; i++) {
 //  document.getElementById("lab" + (i + 1)).innerHTML = " " + levels[i];
@@ -62,7 +68,7 @@ function style_nbhd(feature) {
 }	
 
 function moveLabelsToMarkerPane(event) {
-	var k = document.getElementsByClassName("leaflet-layer").length
+	var k = document.getElementsByClassName("leaflet-layer").length;
 	for (k = 0; k < 4; k++) {
 		if (document.getElementsByClassName("leaflet-layer")[k].style.getPropertyValue("z-index") == "6" ) {
 			document.getElementsByClassName("leaflet-marker-pane")[0].appendChild(
@@ -86,13 +92,7 @@ if (is_mobile) {
 var mapLink = 
 	'<a href="http://openstreetmap.org">OSM</a>',
 	cartoDB = 
-	'<a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
-	CBS = 
-	'<a href="https://www.cbs.nl">CBS</a>',
-  PBL =
-  '<a href="http://www.pbl.nl/">PBL</a>',
-  CCdata =
-  '<a href="https://claircitydata.cbs.nl/">ClairCity data portal</a>';
+	'<a href="http://cartodb.com/attributions#basemaps">CartoDB</a>';
 	
 // Map layers
 var base = L.tileLayer(
@@ -117,7 +117,7 @@ dotmap = L.tileLayer(
 //'http://localhost/adam/hh_type/{z}/{x}/{y}.png'	
 //	localhost + "/" + meta[0].name + '/{z}/{x}/{y}.png'), {
 	'http://localhost/adam/hh_type/{z}/{x}/{y}.png', {
-	attribution: '&copy; ' + CBS + ", " + PBL + ", " + CCdata,
+	attribution: dotmap_attr,
 	minZoom: settings.zmin,
 	maxZoom: settings.zmax,
 	zIndex: 5
@@ -150,7 +150,7 @@ var map = L.map('map', {
 	center: [parseFloat(settings.y), parseFloat(settings.x)],
 	zoom: czoom,
 	maxBounds: [[parseFloat(settings.y1), parseFloat(settings.x1)], [parseFloat(settings.y2), parseFloat(settings.x2)]] // without buffer [[52.28, 4.75], [52.43, 5.02]]
-});
+}).on("zoomend", refreshText);
 
 // Add layers to map
 var base_grp = L.layerGroup([base]).addTo(map);
@@ -160,8 +160,8 @@ var labels_grp = L.layerGroup([labels]).addTo(map);
 
 // Create layer selection box
 var overlays = {};
-overlays[dotmap_text.boundaries] = admin_grp;
-overlays[dotmap_text.labels] = labels_grp;
+overlays[titles.region_title] = admin_grp;
+overlays[titles.labels_title] = labels_grp;
 
 var baselays = {
   "Greyscale": base,
@@ -197,7 +197,7 @@ for (i=0; i < meta.length; i++) {
   input.type = "radio";
   input.value = "radio" + i;
   input.name = "layeritems";
-  input.checked = i==0;
+  input.checked = i===0;
   input.addEventListener("click", changeLayers);
   rform.appendChild(input);
   // Label

@@ -5,7 +5,7 @@
 \title{Determine region per area pixel}
 \usage{
 determine_region_per_area_pixel(dm, i = NULL, j = NULL,
-  logfile = NULL, pkg = "pkg")
+  logfile = NULL)
 }
 \arguments{
 \item{dm}{dotmap_meta object}
@@ -15,10 +15,6 @@ determine_region_per_area_pixel(dm, i = NULL, j = NULL,
 \item{j}{tile column. If \code{NULL} (default) all columns are processed}
 
 \item{logfile}{logfile}
-
-\item{dens_ub}{upperbound of the density per class (e.g. urbanization level)}
-
-\item{dens_lb}{lowerbound of the density per class (e.g. urbanization level)}
 }
 \description{
 The maps created with \code{\link{create_area_maps}} are broken down by the maps created with \code{\link{create_region_maps}}. For each pixel in the first maps, the region id from the second maps are determined.
