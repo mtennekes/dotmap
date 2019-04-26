@@ -1,0 +1,155 @@
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+		
+		
+		table {
+			line-height:16px;
+			table-layout:fixed; 
+			white-space: nowrap;
+			border: 0px solid black;
+			border-collapse: collapse;
+		}
+		
+		tr {
+			padding: 0px;
+			margin:0px;
+		}
+		
+		
+		th, td {
+			padding: 0px;
+			margin:0px;
+		}
+
+		span.cel0 {
+			font-size: 13px;
+			max-height:16px;
+			text-align: left;    
+			vertical-align: top;
+		}
+		
+		div.cel1 {
+			font-size: 11px;
+			width:16px;
+			max-height:16px;
+			text-align: center;    
+		}
+		
+		div.cel2 {
+			font-size: 11px;
+			width:80px;
+			max-height:16px;
+		}
+
+		div.cel3 {
+			font-size: 12px;
+			text-indent: .25em;
+			max-height:16px;
+			width:7em;
+			text-align: left;    
+		}
+		
+		div.cel4 {
+			font-size: 12px;
+			max-height:16px;
+			text-align: left;    
+		}
+		
+		tr.spacer1 {
+			height:3px;
+		}
+		tr.spacer2 {
+			height:0.5em;
+		}
+		
+		img.legimage1 {
+			background: #fafafa;
+		}
+
+		img.legimage2 {
+			background: #0e0e0e;
+		}
+
+		
+		div.dotmaplegendclass {
+			width:13em;
+		}
+		
+		div.legendtitle {
+			margin-bottom:5px;
+		}
+		
+		p.infotext {
+			font-size:12px;
+			line-height:14px;
+			margin-bottom:0px;
+			margin-top:8px
+		}
+		
+		p.onedpp {
+			font-size:12px;
+			margin-top:8px;
+			margin-bottom:0px
+		}
+
+		img.leaflet-tile {
+			-ms-interpolation-mode: nearest-neighbor; /* IE */
+			image-rendering: -webkit-optimize-contrast; /* Old Android, Safari, UC Browser */
+			image-rendering: -moz-crisp-edges; /* Firefox */
+			image-rendering: crisp-edges; /* Safari */
+			image-rendering: pixelated; /* Chrome & Opera */
+		}
+
+		div.dotmapinfobox {
+			width:11.5em;
+			height:3em;
+		}
+
+		div.dotmapwarnbox {
+			width:13em;
+			height:6.5em;
+		}
+
+		div.dotmapinfotext {
+			font-size:12px;
+		}
+
+		.closeButton
+		{
+			display:block;
+			position:absolute;
+			top:3px;
+			right:3px;
+			width:16px;
+    		height:16px;
+    		background:url('cancel.png') no-repeat center center;
+		}
+
+		.bulbIcon
+		{
+			display:block;
+			position:absolute;
+			top:-6px;
+			left:-10px;
+			width:64px;
+    		height:64px;
+    		background:url('bulb.png') no-repeat center center;
+		}
+		
+		.warningIcon
+		{
+			display:block;
+			position:absolute;
+			top:6px;
+			left:6px;
+			width:32px;
+    		height:32px;
+    		background:url('warning-icon.png') no-repeat center center;
+		}
+		

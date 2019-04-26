@@ -71,6 +71,8 @@ write_json_data <- function(dm, localhost) {
   
   meta <- unname(mapply(name = dm$vars, label = dm$var_titles, levels = dm$var_labels, is_div = rep(TRUE, length(dm$vars)), list, SIMPLIFY = FALSE))
   js_write(list(shp, meta, settings, localhost), c("shp", "meta", "settings", "localhost"), file.path(wdir, "index_files/vars.js")) 
+  
+  create_icons(dm, 16, 4)
 }
 
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dot Map</title>
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	
+	<link href="index_files/leaflet-0.7.7.adj/leaflet.css" rel="stylesheet" />
+	
+	<script src="index_files/leaflet-0.7.7.adj/leaflet.js"></script>
+	<script src="index_files/vars.js"></script>
+	<script src="index_files/res.js"></script>
+	<link href="index_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+    
+	<link href="index_files/dotmap.css" rel="stylesheet" />
+
+    <script type="text/template" id="leg1">
+		<div id = "leg2a" style = "display:block">
+			<div class="legendtitle" id="varname"></div>
+			<div id="i1"><img class="legimage1" id="pixels1" src="index_files/icons/icon_16_dz1.png" /><span class="cel0" id="lab1"></span></div>
+			<div id="i2"><img class="legimage1" id="pixels2" src="index_files/icons/icon_16_dz2.png" /><span class="cel0" id="lab2"></span></div>
+			<div id="i3"><img class="legimage1" id="pixels3" src="index_files/icons/icon_16_dz3.png" /><span class="cel0" id="lab3"></span></div>
+			<p class="onedpp"><strong>1 dot = 1 household</strong></p>
+		</div>
+    </script>
+
+	<script type="text/template" id="layerscb">
+		<form action="" id="radioform">
+		</form>    
+		<p style="margin:10px"> </p>
+    </script>
+	
+
+
+    
+</head>
+<body>
+    <div id="map"></div>
+	<script> var dotmap_text = {"boundaries": "Boundaries", "labels": "Labels"}; </script>
+	<script src="index_files/dotmap.js" type="text/javascript"></script>
+
+</body>
+</html>
