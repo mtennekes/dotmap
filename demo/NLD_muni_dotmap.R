@@ -1,20 +1,14 @@
-devtools::load_all("../tmap")
-
-# library(tmap)
-
-data("NLD_muni")
-data("NLD_age")
-data("NLD_origin")
-data("NLD_gender")
+data("NLD_muni", package = "tmap")
+data("NLD_age", package = "tmap")
+data("NLD_origin", package = "tmap")
+data("NLD_gender", package = "tmap")
 
 data("NLD_area1")
 data("NLD_area2")
 
-settings_age <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, palette = rainbow(5), H.method="cat", C.max = 100, C.method = "triangle")
+settings_age <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, H.method="div", C.max = 100, C.method = "triangle")
 settings_gender <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, palette = c("blue", "pink"), H.method="cat", C.max = 100, C.method = "triangle")
 settings_origin <- list(L.delta = 0.7, L.w = 4, L.lim = c(85, 20), H1 = 0, H.method="cat", C.max = 100, C.method = "triangle")
-
-
 
 NLD_demo <- dotmap_project(dir="test/NLD_demo",
                            area1 = NLD_area1, 
@@ -31,7 +25,7 @@ NLD_demo <- dotmap_project(dir="test/NLD_demo",
                                              gender = NLD_gender,
                                              origin = NLD_origin),
                            bbx=NA,
-                           z = list(c(7, 7, 9),
+                           z = list(c(7, 8, 9),
                                     c(9, 10, 11)),
                            z_arr=9,
                            crs = 28992,
@@ -47,7 +41,7 @@ cl <- makeCluster(3)
 registerDoParallel(cl)
 
 process_dotmap <- function() {
-  #create_area_maps(NLD_demo, pkg = ".")
+  create_area_maps(NLD_demo)
   create_area_maps(NLD_demo, primary = FALSE)
   dotmap:::subtract_area_maps(NLD_demo)
   create_region_maps(NLD_demo)
@@ -66,12 +60,20 @@ process_dotmap()
 
 ## Make sure XAMPP is installed and running
 
+# Windows:
+# - Install Xampp
+# - Copy files from [project dir]/htmlserver to the localhost (by default c:\xampp\htdocs)
+# - Run Xampp
+# - Start Apache server
+
 # Ubuntu:
-# - Installation, see http://www.codebind.com/linux-tutorials/install-xampp-ubuntu-18-04/
+# - Installation, see e.g. http://www.codebind.com/linux-tutorials/install-xampp-ubuntu-18-04/
 # - Open /opt/lampp/etc/httpd.conf and find the DocumentRoot. Change this folder if you like.
 # - Copy files from [project dir]/htmlserver to the DocumentRoot
-# - sudo /opt/lampp/manager-linux-x64.run
-# - start Apache Web Server
+# - Run sudo /opt/lampp/manager-linux-x64.run
+# - Start Apache Web Server
+
+
 
 show_dotmap(NLD_demo, localhost = "http://127.0.0.1/NLD")
 

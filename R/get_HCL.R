@@ -25,7 +25,7 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
   nrowx <- nrow(m)
   ncolx <- ncol(m)
   
-  if (ncolx > 3 && is.na(palette[1])) stop("Number of columns should be at most three, or a palette should be defined")
+  if (ncolx > 3 && (H.method == "cat" && is.na(palette[1]))) stop("For the categorical coloring method, the number of columns should be at most three, or a palette should be defined")
   
   if (!is.matrix(m)) {
     if (is.data.frame(m)) {
