@@ -27,8 +27,6 @@ NLD_demo <- dotmap_project(dir="test/NLD_demo",
                            bbx=NA,
                            z = list(c(7, 8, 9),
                                     c(9, 10, 11)),
-                           z_arr=9,
-                           crs = 28992,
                            tile_size=256,
                            transparent=TRUE,
                            settings=list(age=settings_age, gender=settings_gender, origin=settings_origin))
@@ -43,17 +41,14 @@ registerDoParallel(cl)
 process_dotmap <- function() {
   create_area_maps(NLD_demo)
   create_area_maps(NLD_demo, primary = FALSE)
-  dotmap:::subtract_area_maps(NLD_demo)
+  subtract_area_maps(NLD_demo)
   create_region_maps(NLD_demo)
-  dotmap:::determine_region_per_area_pixel(NLD_demo)
-  dotmap:::sample_pop_to_pixels(NLD_demo)
-  
-  dotmap:::aggregate_dotmap_data(NLD_demo, s=4)
-  
-  dotmap:::aggregate_lower_zooms(NLD_demo)
-  
-  dotmap:::plot_dotmap(NLD_demo)
-  dotmap:::make_tile_server(NLD_demo)
+  determine_region_per_area_pixel(NLD_demo)
+  dist_pop_to_pixels(NLD_demo)
+  aggregate_dotmap_data(NLD_demo)
+  aggregate_lower_zooms(NLD_demo)
+  plot_dotmap(NLD_demo)
+  make_tile_server(NLD_demo)
 }
 
 process_dotmap()

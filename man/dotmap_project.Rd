@@ -6,45 +6,43 @@
 \usage{
 dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
   var_titles = NULL, var_labels = NULL, pop_totals = NULL,
-  pop_tables, dens_ub = NULL, dens_lb = NULL, bbx = NA, z, z_arr,
-  tile_size = 256, transparent = TRUE, crs, settings,
+  pop_tables, dens_ub = NULL, dens_lb = NULL, bbx = NA, z,
+  z_arr = NA, tile_size = 256, transparent = TRUE, settings,
   title = "Dotmap", region_title = "Borders",
   labels_title = "Labels", dots_text = "", dotmap_attr = "")
 }
 \arguments{
-\item{dir}{dir}
+\item{dir}{The project directory. It has/will have the following subdirectories: source (raw input files), input (preprocessed input files), tiles_area (processed data regarding the canvas available for the dots), dotmap_data (processed data regarding the dotmap), htmlserver (the output tile server), website (the dotmap website).}
 
-\item{area1}{area1}
+\item{area1}{A spatial polygons object (class \code{sfc} or \code{sf}) that defines main the canvas for the dots. For instance, the OSM land use category residential.}
 
-\item{area2}{area2}
+\item{area2}{(optional) A spatial polygons object (class \code{sfc} or \code{sf}) that defines second-stage canvas for the dots. Only used if not all dots can be placed on the main canvas (defined by \code{area1}).}
 
-\item{region}{region}
+\item{region}{A spatial polygons object (class \code{sfc} or \code{sf}) that defines the regions of the dots. The data (see \code{pop_totals} and \code{pop_tables}) should be provided per region. Note that \code{region} can be specified by the same spatial object as \code{area1}, but not necessarily. For instance, \code{region} could be the municiaplity borders, while \code{area1} are residential areas.}
 
-\item{vars}{vars}
+\item{vars}{Character vector that specifies the variables. These names are used within the process, so please do no use whitespaces.}
 
-\item{var_titles}{var_titles}
+\item{var_titles}{Character vector that specifies the variable titles (shown in the visualization).}
 
-\item{var_labels}{var_labels}
+\item{var_labels}{List of category labels per variable. So each list item corresponds to a variable and should be a vector of category labels.}
 
-\item{pop_totals}{pop_totals}
+\item{pop_totals}{Either a number vector that contains the population sizes per region, or a data.frame with a column \code{pop} (with population numbers) and optionally a column \code{class} which defines the dot density class (see \code{dens_ub} and \code{dens_lb})}
 
-\item{pop_tables}{pop_tables}
+\item{pop_tables}{pop_tables For each variable, a data.frame where the rows correspond to the regions and the columns to the categories.}
 
-\item{dens_ub}{dens_ub}
+\item{dens_ub}{Upper bound for the dot densities per class (see also \code{pop_totals}). If the number of dots exceeds this number, the remaining dots will be placed in the \code{area2} region if defined. Otherwise, they are ignored.}
 
-\item{dens_lb}{dens_lb}
+\item{dens_lb}{dens_lb Lower bound for the dot densities per class. If the number of dots is lower than this number, they are not drawn.}
 
-\item{bbx}{bbx}
+\item{bbx}{Bounding box. By default, the bounding box of \code{region} is taken.}
 
-\item{z}{z}
+\item{z}{List of zoom levels at which the dots are distributed and drawn. Each list item corresponds a distribution level. If only one distribution level is specified, the dots are distributed at a specific zoom level, where for other zoom levels, they are blended to darker pixel colors (zooming out) or enlarged (zooming in). If multiple zoom levels are specified, the dots are distributed at the highest zoom level, and after that aggregated to super dots for the other distribution levels. For each list item, a numeric vector of three should be specified: the zoom level at which the dots are distributed, the lowest zoom level at which this distribution is rendered, the highest zoom level at which this distribution is rendered. Note that the distribution zoom level does not have to be the same as one of the other two zoom levels. However, across all distribution levels, all zoom levels have to be present.}
 
-\item{z_arr}{z_arr}
+\item{z_arr}{The zoom level at which the tiles are first created. If set to the highest distribution zoom level (see \code{z}), the tiles will be as large as \code{tile_size}. By default, they are two zoom levels lower (so the tiles are 4x4 as large).}
 
-\item{tile_size}{tile_size}
+\item{tile_size}{Tile size. By default 256}
 
-\item{transparent}{transparent}
-
-\item{crs}{crs}
+\item{transparent}{Should the tiles be transparent? By default \code{TRUE}}
 
 \item{settings}{settings}
 
@@ -59,5 +57,5 @@ dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
 \item{dotmap_attr}{dotmap_attr}
 }
 \description{
-Create dotmap project
+This function creates a dotmap project.
 }

@@ -35,11 +35,10 @@ check_shape <- function(dir,
 #' @param dens_ub Upper bound for the dot densities per class (see also \code{pop_totals}). If the number of dots exceeds this number, the remaining dots will be placed in the \code{area2} region if defined. Otherwise, they are ignored.
 #' @param dens_lb dens_lb Lower bound for the dot densities per class. If the number of dots is lower than this number, they are not drawn.
 #' @param bbx Bounding box. By default, the bounding box of \code{region} is taken.
-#' @param z z List of zoom levels at which the dots are sampled and drawn. Each list item corresponds a distribution level. If only one distribution level is specified, the dots are distributed at a specific zoom level, where for other zoom levels, they are blended to darker pixel colors (zooming out) or enlarged (zooming in). If multiple zoom levels are specified, the dots are distributed at the highest zoom level, and after that aggregated to super dots for the other distribution levels. For each list item, a numeric vector of three should be specified: the zoom level at which the dots are distributed, the lowest zoom level at which this distribution is rendered, the highest zoom level at which this distribution is rendered. Note that the distribution zoom level does not have to be the same as one of the other two zoom levels. However, across all distribution levels, all zoom levels have to be present.
-#' @param z_arr z_arr
-#' @param tile_size tile_size
-#' @param transparent transparent
-#' @param crs crs
+#' @param z List of zoom levels at which the dots are distributed and drawn. Each list item corresponds a distribution level. If only one distribution level is specified, the dots are distributed at a specific zoom level, where for other zoom levels, they are blended to darker pixel colors (zooming out) or enlarged (zooming in). If multiple zoom levels are specified, the dots are distributed at the highest zoom level, and after that aggregated to super dots for the other distribution levels. For each list item, a numeric vector of three should be specified: the zoom level at which the dots are distributed, the lowest zoom level at which this distribution is rendered, the highest zoom level at which this distribution is rendered. Note that the distribution zoom level does not have to be the same as one of the other two zoom levels. However, across all distribution levels, all zoom levels have to be present.
+#' @param z_arr The zoom level at which the tiles are first created. If set to the highest distribution zoom level (see \code{z}), the tiles will be as large as \code{tile_size}. By default, they are two zoom levels lower (so the tiles are 4x4 as large).
+#' @param tile_size  Tile size. By default 256
+#' @param transparent Should the tiles be transparent? By default \code{TRUE}
 #' @param settings settings
 #' @param title titles
 #' @param region_title region_title
@@ -76,10 +75,9 @@ dotmap_project <- function(dir,
                            dens_lb=NULL,
                            bbx=NA,
                            z,
-                           z_arr,
+                           z_arr = NA,
                            tile_size=256,
                            transparent=TRUE,
-                           crs,
                            settings,
                            title = "Dotmap",
                            region_title = "Borders",
@@ -227,7 +225,13 @@ dotmap_project <- function(dir,
     } 
   }
   
+  z_r <- max(z_res)
   
+  if (is.na(z_arr)) {
+    z_arr <- max(min(zm), z_r - 2)
+    #message("z_arr set to ", z_arr)
+  }
+
   z_min <- min(zm, z_arr)
   z_max <- max(zm)
   
@@ -240,13 +244,20 @@ dotmap_project <- function(dir,
   # approximate persons per km2
   
   #area_pix <- lapply(z_res, function(z_r) {
-  z_r <- max(z_res)
   
   res <- ri[[paste0("z", z_r)]]
   
-  if (missing(crs)) stop("crs missing")
-  bbx3 <- tmaptools::bb(res$bbx, current.projection = "merc", projection = crs)
-  tile_size_m <- c(bbx[c(3,4)] - bbx[c(1,2)]) / c(res$nx, res$ny)
+  dist_res <- tmaptools::approx_distances(res$bbx, projection = "merc")
+
+  get_hv_dist <- function(bbx, projection) {
+    #derived from tmaptools::approx_distances
+    pW <- st_transform(st_sfc(st_point(c(bbx[1], (bbx[2] + bbx[4])/2)), crs = projection), crs = 4326)
+    pE <- st_transform(st_sfc(st_point(c(bbx[3], (bbx[2] + bbx[4])/2)), crs = projection), crs = 4326)
+    pS <- st_transform(st_sfc(st_point(c((bbx[1] + bbx[3])/2, bbx[2])), crs = projection), crs = 4326)
+    pN <- st_transform(st_sfc(st_point(c((bbx[1] + bbx[3])/2, bbx[4])), crs = projection), crs = 4326)
+    as.numeric(c(lwgeom::st_geod_distance(pW, pE), lwgeom::st_geod_distance(pN, pS)))
+  }
+  tile_size_m <- get_hv_dist(res$bbx, 3857) / c(res$nx, res$ny)
   tile_size_px <- c(res$px/res$nx, res$py/res$ny) 
   area_1pix <- prod(tile_size_m / tile_size_px)
   pix_1km2 <- prod(tile_size_px / tile_size_m * 1000)
@@ -265,8 +276,7 @@ dotmap_project <- function(dir,
     names(settings) <- vars
   }
   
-  list(bbx_orig=bbx3,
-       bbx=bbx2,
+  list(bbx=bbx2,
        bbx_shp = bbx,
        n=n,
        m=m,

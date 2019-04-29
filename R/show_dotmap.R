@@ -61,7 +61,8 @@ working_localhost <- function (url)
 }
 
 
-check_localhost <- function(path, var, localhost) {
+check_localhost <- function(path, var, localhost, result = c("error", "warning")) {
+  result <- match.arg(result)
   d1 <- list.files(file.path(path, var))[1]
   d2 <- list.files(file.path(path, var, d1))[1]
   d3 <- list.files(file.path(path, var, d1, d2))[1]
@@ -69,7 +70,13 @@ check_localhost <- function(path, var, localhost) {
   onetile <- file.path(localhost, var, d1, d2, d3)
   chk <- working_localhost(onetile)
   
-  if (!chk) stop("Cannot find tile server. Please check if the files are copied from ", path, " to ", localhost, " correctly. You can test it by opening ", onetile, " in your browser, which should show you a single png tile.")
+  if (!chk) {
+    if (result == "error") {
+      stop("Cannot find tile server. Please check if the files are copied from ", path, " to ", localhost, " correctly. You can test it by opening ", onetile, " in your browser, which should show you a single png tile.")
+    } else {
+      warning("Cannot find tile server. Please check if the files are copied from ", path, " to ", localhost, " correctly. You can test it by opening ", onetile, " in your browser, which should show you a single png tile.")
+    }
+  }
   invisible()
 }
 

@@ -4,12 +4,10 @@
 \alias{aggregate_dotmap_data}
 \title{Aggregate dotmap data}
 \usage{
-aggregate_dotmap_data(dm, s = 4)
+aggregate_dotmap_data(dm)
 }
 \arguments{
 \item{dm}{dm}
-
-\item{s}{s}
 }
 \description{
 Aggregate dotmap data

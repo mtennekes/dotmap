@@ -11,11 +11,10 @@ matrix_to_row_col <- function(m) {
 #' Aggregate dotmap data
 #' 
 #' @param dm dm
-#' @param s s
 #' @import KernSmooth
 #' @import abind
 #' @export
-aggregate_dotmap_data <- function(dm, s=4) {
+aggregate_dotmap_data <- function(dm) {
   set.seed(12345)
   
   zres <- dm$z_res
@@ -67,7 +66,6 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f) {
       fle <- paste0(dir1, "/pop_", i, "_", j, ".rdata")
       
       if (!file.exists(fle)) next
-      
       load(fle)
       
       n <- sqrt(nrow(a))

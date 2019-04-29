@@ -40,6 +40,9 @@ create_dotmap_website <- function(dm, localhost) {
   file.copy(file.path(system.file(package = "dotmap"), "website_template/index.html"), wdir)
   
   
+  check_localhost(path = dm$dir_htmlserver, var = dm$vars[1], localhost = localhost, result = "warning")
+  
+  
   shp <- shp_to_4326_round(readRDS(dm$file_shp_region), 4)
   
   x1 <- unname(dm$bbx_shp[1])

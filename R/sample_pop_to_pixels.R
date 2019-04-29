@@ -1,4 +1,4 @@
-#' Sample population to pixels at the highest zoom level
+#' Distribute population to pixels at the highest zoom level
 #' 
 #' @param dm dotmap_info object
 #' @param i tile row. If \code{NULL} (default) all rows are processed
@@ -6,7 +6,7 @@
 #' @param logfile logfile
 #' @param bound logical value that determines whether all dots should be assigned to pixels, even though there are not enough pixels. \code{TRUE} means that the number of dots that are samples is bounded by the number of pixels.
 #' @export
-sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE) {
+dist_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE) {
   rmeta <- readRDS(file.path(dm$dir_tiles_areas, "rmeta_pixels.rds"))
   
   nvars <- length(dm$m)
@@ -36,7 +36,7 @@ sample_pop_to_pixels <- function(dm, i=NULL, j=NULL, logfile=NULL, bound=TRUE) {
       dmk$pop_table <- dmk$pop_tables[[k]]
       dmk$pop_table_name <- dmk$vars[k]
       dmk$pop_tables <- NULL
-      sample_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, rnd=rnd)
+      dist_one_pop_to_pixels(dmk, i=i, j=j, logfile=logfile, bound=bound, rnd=rnd)
     }
   #}
 }
@@ -53,7 +53,7 @@ random_seq <- function(res) {
   c(rnd, rnd_missings)
 }
 
-sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, rnd) {
+dist_one_pop_to_pixels <- function(dm, i, j, logfile, bound, rnd) {
   
   
   #load(file.path(dm$file_pop))
@@ -71,7 +71,7 @@ sample_one_pop_to_pixels <- function(dm, i, j, logfile, bound, rnd) {
   
   res <- ri_res$py/ri_arr$ny
   
-  message("sample population to pixels")
+  message("distribute population to pixels")
   #rmeta$pop
   ais <- list(
     list(rmeta = data.frame(pixels=rmeta$pixels1, pop=rmeta$pop1),

@@ -11,6 +11,10 @@ make_tile_server <- function(dm, logfile=NULL) {
   nvars <- length(dm$m)
   nagg <- length(dm$z_res)
   
+  aggs <- order(dm$z_res, decreasing = TRUE)
+  
+  unlink(dm$dir_htmlserver, recursive = TRUE, force = TRUE)
+  
   for (k in 1:nvars) {
     dmk <- dm
     dmk$m <- dmk$m[k]
@@ -20,7 +24,7 @@ make_tile_server <- function(dm, logfile=NULL) {
     dmk$dir <- file.path(dmk$dir_htmlserver, dmk$pop_table_name) #dmk$resname, 
     unlink(dmk$dir, recursive = TRUE, force = TRUE)      
     
-    for (a in 1:nagg) {
+    for (a in aggs) {
       dmk$z_from <- dm$z_from[a]
       dmk$z_to <- dm$z_to[a]
       dmk$z_res <- dm$z_res[a]
@@ -40,6 +44,7 @@ make_tile_server_i <- function(dm, logfile=NULL) {
   zall <- zmin:zmax
   
   message("Make tile server files")
+  
   ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
   ri_res <- dm$ri[[paste0("z", dm$z_res)]]
   
@@ -48,9 +53,17 @@ make_tile_server_i <- function(dm, logfile=NULL) {
   zsplt <- intersect(max(dm$z_res, dm$z_arr):dm$z_arr, zall)
   zxtra <- if (zmax > max(dm$z_res, dm$z_arr)) intersect((max(dm$z_res, dm$z_arr)+1):zmax, zall) else NULL
 
-
+  if (dm$z_res < zmin) {
+    zdummy <- dm$z_res:(zmin-1)
+    zsplt_orig <- zsplt
+    zsplt <- c(zdummy, zsplt)
+  } else {
+    zdummy <- NULL
+  }
+  
   cat("zcomb ", paste(zcomb, collage=","), "\n")
   cat("zsplt ", paste(zsplt, collage=","), "\n")
+  if (!is.null(zdummy)) cat("(temp: ", paste(zdummy, collage=","), ")\n")
   cat("zxtra ", paste(zxtra, collage=","), "\n")
 
   src <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
@@ -307,7 +320,13 @@ make_tile_server_i <- function(dm, logfile=NULL) {
         if (length(list.files(p))==0) unlink(p, recursive = TRUE, force = TRUE)
       })
   }
-  
+
+  if (!is.null(zdummy)) {
+    lapply(zdummy, function(z) {
+      unlink(file.path(dir, z), recursive = TRUE, force = TRUE)
+    })
+  }
+    
 }
 
 # 
