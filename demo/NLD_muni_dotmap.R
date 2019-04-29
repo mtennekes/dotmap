@@ -1,7 +1,7 @@
 data("NLD_muni", package = "tmap")
-data("NLD_age", package = "tmap")
-data("NLD_origin", package = "tmap")
-data("NLD_gender", package = "tmap")
+data("NLD_age")
+data("NLD_origin")
+data("NLD_gender")
 
 data("NLD_area1")
 data("NLD_area2")
