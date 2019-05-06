@@ -31,7 +31,8 @@ aggregate_dotmap_data <- function(dm) {
     for (i in length(zres):2L) {
       zfrom <- zres[i]
       zto <- zres[i-1L]
-
+      s <- dm$scale[i]
+      
       dir1 <- file.path(dm$dir_dotmap_data, paste0("res", zfrom), pop_table_name, zfrom)
       dir2 <- file.path(dm$dir_dotmap_data, paste0("res", zto), pop_table_name, zto)
       dir.create(dir2, recursive = TRUE, showWarnings = FALSE)
@@ -39,7 +40,7 @@ aggregate_dotmap_data <- function(dm) {
       f <- 2^(zfrom-zto)
       ri_arr <- dm$ri[[paste0("z", dm$z_arr)]]
       
-      aggregate_dotmap_data_i(dir1=dir1, dir2=dir2, ri_arr=ri_arr, f=f)
+      aggregate_dotmap_data_i(dir1=dir1, dir2=dir2, ri_arr=ri_arr, f=f, s=s)
     }
   }
   
@@ -47,7 +48,9 @@ aggregate_dotmap_data <- function(dm) {
 }
 
 
-aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f) {
+# f is the scaling reduction per dimension (so 2 for one zoom level)
+# s is the scaling factor for the number of dots (normally 2^2 for one zoom level)
+aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
   
 
 
@@ -55,7 +58,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f) {
   seti <- 1L:ri_arr$nx
   setj <- 1L:ri_arr$ny
   
-  s <- f # not sure whether s!=f can happen
+  #s <- f # not sure whether s!=f can happen
   
   
   
@@ -83,7 +86,6 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f) {
         save(a, file = file.path(dir2, paste0("pop_", i, "_", j, ".rdata"))) 
         next
       }
-      
       # x <- a[,, 1]
       # 
       # x2 <- bkde2D(matrix_to_row_col(x), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat

@@ -41,7 +41,6 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
   n <- m / rs # matrix of probabilities
   n[is.nan(n)] <- NA
   
-
   if (!is.na(palette[1])) {
     if (length(palette) != ncolx) stop("Number of colors inconsistent with number of categories")
     maxn <- apply(m, MARGIN = 1, function(mi) {

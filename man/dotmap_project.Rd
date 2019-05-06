@@ -7,8 +7,8 @@
 dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
   var_titles = NULL, var_labels = NULL, pop_totals = NULL,
   pop_tables, dens_ub = NULL, dens_lb = NULL, bbx = NA, z,
-  z_arr = NA, tile_size = 256, transparent = TRUE, settings,
-  title = "Dotmap", region_title = "Borders",
+  z_arr = NA, scale = NA, tile_size = 256, transparent = TRUE,
+  settings, title = "Dotmap", region_title = "Borders",
   labels_title = "Labels", dots_text = "", dotmap_attr = "")
 }
 \arguments{
@@ -36,25 +36,27 @@ dotmap_project(dir, area1 = NULL, area2 = NULL, region = NULL, vars,
 
 \item{bbx}{Bounding box. By default, the bounding box of \code{region} is taken.}
 
-\item{z}{List of zoom levels at which the dots are distributed and drawn. Each list item corresponds a distribution level. If only one distribution level is specified, the dots are distributed at a specific zoom level, where for other zoom levels, they are blended to darker pixel colors (zooming out) or enlarged (zooming in). If multiple zoom levels are specified, the dots are distributed at the highest zoom level, and after that aggregated to super dots for the other distribution levels. For each list item, a numeric vector of three should be specified: the zoom level at which the dots are distributed, the lowest zoom level at which this distribution is rendered, the highest zoom level at which this distribution is rendered. Note that the distribution zoom level does not have to be the same as one of the other two zoom levels. However, across all distribution levels, all zoom levels have to be present.}
+\item{z}{List of zoom levels at which the dots are distributed and drawn. Each list item corresponds a distribution level. If only one distribution level is specified, the dots are distributed at a specific zoom level, where for other zoom levels, they are blended to darker pixel colors (zooming out) or enlarged (zooming in). If multiple zoom levels are specified, the dots are distributed at the highest zoom level, and after that aggregated to super dots for the other distribution levels. For each list item, a numeric vector of three should be specified: the zoom level at which the dots are distributed, the lowest zoom level at which this distribution is rendered, the highest zoom level at which this distribution is rendered. Note that the distribution zoom level does not have to be the same as one of the other two zoom levels. However, across all distribution levels, all zoom levels have to be present. The order of list items should be increasing, so the first vector should specify the distribution level of the lowest zoom level.}
 
 \item{z_arr}{The zoom level at which the tiles are first created. If set to the highest distribution zoom level (see \code{z}), the tiles will be as large as \code{tile_size}. By default, they are two zoom levels lower (so the tiles are 4x4 as large).}
+
+\item{scale}{Vector of numbers that specify how many small dots a super dot represents. Only applicable if \code{z} contains more than 1 list items. If so, it should be the same length of \code{z}, where the last value should be 1 (since it represents the small dots). By default, it is 4 for one zoom level difference, 16 for two zoom levels difference, etc.}
 
 \item{tile_size}{Tile size. By default 256}
 
 \item{transparent}{Should the tiles be transparent? By default \code{TRUE}}
 
-\item{settings}{settings}
+\item{settings}{A list, with per variable, a list of color settings.}
 
-\item{title}{titles}
+\item{title}{Title of the dotmap}
 
-\item{region_title}{region_title}
+\item{region_title}{Title of the region boundary layer.}
 
-\item{labels_title}{labels_title}
+\item{labels_title}{Title of the map labels layer.}
 
-\item{dots_text}{dots_text}
+\item{dots_text}{dots_text Text that explains the dots in the legend (e.g. \code{"one dot represents one person"}). When multiple distribution levels are used, it should be a vector.}
 
-\item{dotmap_attr}{dotmap_attr}
+\item{dotmap_attr}{dotmap_attr The map attribute for the dotmap layer.}
 }
 \description{
 This function creates a dotmap project.
