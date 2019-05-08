@@ -101,10 +101,19 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
 
       # 2d kde
       #if (i==1 && j==7) browser()
-      
+      #bro
+
       blist <- lapply(1:m, function(ii) {
         if (asums[[ii]] == 0) return(matrix(0, ncol = k, nrow = k))
-        bi <- bkde2D(matrix_to_row_col(a[,,ii]), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat
+        
+        # matrix with a buffer; otherwise the edges become to sparser
+        abuff <- a[c(1:f, 1L:n, (n-(f-1)):n), c(1:f, 1L:n, (n-(f-1)):n), ii]
+        
+        #bi <- bkde2D(matrix_to_row_col(a[,,ii]), bandwidth = c(1.5,1.5), gridsize=c(k, k))$fhat
+        #bi <- bkde2D(matrix_to_row_col(a[,,ii]), bandwidth = c(1.5,1.5), gridsize=c(k, k), range.x=list(c(1, n), c(1, n)))$fhat
+        
+        bi <- bkde2D(matrix_to_row_col(abuff), bandwidth = c(1.5,1.5), gridsize=c(k+2, k+2), range.x=list(c(1, n + (2*f)), c(1, n + (2*f))))$fhat
+        bi <- bi[2:(k+1), 2:(k+1)]
         bi <- bi / sum(bi) * asums[ii]
         bi[bi < 1] <- 0
         bi
@@ -130,7 +139,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
       b2 <- matrix(b, ncol=m)
     
       pw <- rep(1, m)      
-      for (it in 1:10) {
+      for (it in 1:1) { #10
         x <- sapply(ids, function(id) {
           prb <- b2[id, ] * pw
           if (all(prb==0)) return(NA)

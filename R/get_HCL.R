@@ -33,6 +33,7 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
     } else stop("x should be a matrix")
   }
   
+  
   sel <- which(rowSums(m)>0)
   m <- m[sel,,drop=FALSE]
   
@@ -74,7 +75,6 @@ get_HCL_colors <- function(m, H1 = 0, L.lim=c(80,20), L.delta=.65, L.w=10, zf=0,
       }
     } else {
       if (H.method=="div") {
-        #browser()
         n2 <- rowSums(n * matrix(1:ncol(n), ncol=ncol(n), nrow=nrow(n), byrow = TRUE))
         midcol <- (ncolx +1)/2
         # Hids <- apply(n, MARGIN = 1, function(v) {

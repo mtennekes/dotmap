@@ -222,7 +222,7 @@ dist_one_pop_to_pixels <- function(dm, i, j, logfile, bound, rnd) {
         if (any(pop_per_pix_ij[-c(1:2)]!=0)) cat("! clipping at tile ", i, j, "\n")
         
         pop_per_pix <- pop_per_pix + pop_per_pix_ij
-        save(a, file = file.path(dir, paste0("pop_", i, "_", j, ".rdata")))
+        if (sum(a) > 0) save(a, file = file.path(dir, paste0("pop_", i, "_", j, ".rdata")))
         rm(a)
       }
     } # close j

@@ -68,7 +68,6 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, logfile=NULL) {
   
   #dirdotmap <- file.path(dm$dir_dotmap_data, dm$resname, dm$pop_table_name)
 
-
   subset_pop <- !all(setup$sub.pops)
   foreach(i=seti, .packages = c("png", "dotmap")) %dopar% { 
   #for (i in seti) {
@@ -84,6 +83,9 @@ plot_dotmap_i <- function(dm, i=NULL, j=NULL, logfile=NULL) {
         if (file.exists(filename)) {
           load(filename)
           if (subset_pop) a[, !setup$sub.pops] <- 0L
+          
+          #if (z==12 && i==1 && j==2) browser()
+          
           x <- get_HCL_colors(a, L.delta=setup$L.delta, L.w=setup$L.w, zf=dm$z_res-z, transparent=dm$transparent, output = "rgb", L.lim = setup$L.lim, H1 = setup$H1, H.method=setup$H.method, C.max=100, palette=setup$palette)
           rm(a); gc()
           
