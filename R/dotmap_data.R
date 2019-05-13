@@ -200,7 +200,6 @@ dotmap_project <- function(dir,
   lookup <- get_lookup(n)
   #save(lookup, file = file_lookup)
   
-  
   if (is.na(bbx[1])) {
     bbx <- tmaptools::bb(region, projection = "longlat")
   } else {

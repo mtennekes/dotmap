@@ -27,9 +27,6 @@ function changeLayers(layer) {
   var label = meta[id].label;
   var levels = meta[id].levels;
 
-  
-  //dotmap.setUrl('http://127.0.0.1/htmlserver/tiles_adam_' + name + '/{z}/{x}/{y}.png');
-  //dotmap.setUrl('http://research.cbs.nl/colordotmap/tiles_adam_' + name + '/{z}/{x}/{y}.png');
   dotmap.setUrl(localhost + "/" + name + '/{z}/{x}/{y}.png');
 	
 	var z = map.getZoom();
@@ -113,10 +110,7 @@ base2 = L.tileLayer(
 	zIndex: 1
 }),
 dotmap = L.tileLayer(
-  //'http://127.0.0.1/adam/income/{z}/{x}/{y}.png', {
-//'http://localhost/adam/hh_type/{z}/{x}/{y}.png'	
-//	localhost + "/" + meta[0].name + '/{z}/{x}/{y}.png'), {
-	'http://localhost/adam/hh_type/{z}/{x}/{y}.png', {
+	localhost + "/" + meta[0].name + '/{z}/{x}/{y}.png', {
 	attribution: dotmap_attr,
 	minZoom: settings.zmin,
 	maxZoom: settings.zmax,

@@ -27,12 +27,12 @@ js_write <- function(objects, vars, file) {
 #' 
 #' Create dotmap website
 #' 
-#' @param dm dm
-#' @param localhost localhost
+#' @param dm project, created with \code{\link{dotmap_project}}
+#' @param localhost localhost (i.e. location) of the tileserver. If \code{NULL} (default), the tiles are copied to the folder \code{index_files}. It is recommended to specify \code{localhost} for locally runned websites.
 #' @importFrom  geojsonio geojson_write
 #' @importFrom jsonlite toJSON
 #' @export
-create_dotmap_website <- function(dm, localhost) {
+create_dotmap_website <- function(dm, localhost = NULL) {
   wdir <- dm$dir_website
   unlink(wdir)
   dir.create(wdir, showWarnings = FALSE)
@@ -40,7 +40,14 @@ create_dotmap_website <- function(dm, localhost) {
   file.copy(file.path(system.file(package = "dotmap"), "website_template/index.html"), wdir)
   
   
-  check_localhost(path = dm$dir_htmlserver, var = dm$vars[1], localhost = localhost, result = "warning")
+  if (!is.null(localhost)) {
+    check_localhost(path = dm$dir_htmlserver, var = dm$vars[1], localhost = localhost, result = "warning")
+  } else {
+    target_dir <- file.path(dm$dir_website, "index_files")
+    dir.create(target_dir, showWarnings = FALSE)
+    file.copy(dm$dir_htmlserver, target_dir, recursive=TRUE)
+    localhost <- "index_files/htmlserver"
+  }
   
   
   shp <- shp_to_4326_round(readRDS(dm$file_shp_region), 4)
