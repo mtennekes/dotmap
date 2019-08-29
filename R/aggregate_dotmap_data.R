@@ -31,7 +31,7 @@ aggregate_dotmap_data <- function(dm) {
     for (i in length(zres):2L) {
       zfrom <- zres[i]
       zto <- zres[i-1L]
-      s <- dm$scale[i]
+      s <- dm$scale[i-1L]
       
       dir1 <- file.path(dm$dir_dotmap_data, paste0("res", zfrom), pop_table_name, zfrom)
       dir2 <- file.path(dm$dir_dotmap_data, paste0("res", zto), pop_table_name, zto)
@@ -52,7 +52,6 @@ aggregate_dotmap_data <- function(dm) {
 # s is the scaling factor for the number of dots (normally 2^2 for one zoom level)
 aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
   
-
 
   
   seti <- 1L:ri_arr$nx
@@ -77,8 +76,11 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
       
       a <- array(a, dim = c(n, n, m))
       
+      #if (i == 1 && j == 2) browser()
+      
       asums <- apply(a, 3, sum)
       ls <- round(asums / s)
+      
       l <- sum(ls)
       
       if (l==0) {

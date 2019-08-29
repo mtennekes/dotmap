@@ -55,8 +55,15 @@ make_tile_server_i <- function(dm, logfile=NULL) {
 
   if (dm$z_res < zmin) {
     zdummy <- dm$z_res:(zmin-1)
-    zsplt_orig <- zsplt
+    #zsplt_orig <- zsplt
     zsplt <- c(zdummy, zsplt)
+    
+    # needed for case z = list(c(7, 8, 10), c(9, 11, 12)), 
+    if (dm$z_res %in% zsplt) {
+      zxtra <- c(zsplt[zsplt > dm$z_res], zxtra)
+      zsplt <- zsplt[zsplt <= dm$z_res]
+    }
+    
   } else {
     zdummy <- NULL
   }
@@ -247,8 +254,7 @@ make_tile_server_i <- function(dm, logfile=NULL) {
 
     
     patt <- get_pattern(mx, ts)
-    
-    
+
     if (!transparent) patt <- array(rep(patt,3), dim=c(ts, ts, 3))
 
     
