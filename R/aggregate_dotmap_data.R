@@ -76,7 +76,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
       
       a <- array(a, dim = c(n, n, m))
       
-      #if (i == 1 && j == 2) browser()
+      
       
       asums <- apply(a, 3, sum)
       ls <- round(asums / s)
@@ -103,7 +103,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
 
       # 2d kde
       #if (i==1 && j==7) browser()
-      #bro
+      #if (i == 1 && j == 2) browser()
 
       blist <- lapply(1:m, function(ii) {
         if (asums[[ii]] == 0) return(matrix(0, ncol = k, nrow = k))
@@ -117,7 +117,7 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
         bi <- bkde2D(matrix_to_row_col(abuff), bandwidth = c(1.5,1.5), gridsize=c(k+2, k+2), range.x=list(c(1, n + (2*f)), c(1, n + (2*f))))$fhat
         bi <- bi[2:(k+1), 2:(k+1)]
         bi <- bi / sum(bi) * asums[ii]
-        bi[bi < 1] <- 0
+        #bi[bi < .05] <- 0
         bi
       })
       b <- do.call(abind, c(blist, list(along=3)))
@@ -125,7 +125,10 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
       
       probs <- as.vector(btot)
 
-      ids <- which(btot>0)
+      # sample from 2dke, the sampled ids will be the location of the new dots
+      ids <- sample.int(k^2, l, prob = probs)
+      
+      #ids <- which(btot>0)
 
 
       
@@ -155,6 +158,8 @@ aggregate_dotmap_data_i <- function(dir1, dir2, ri_arr, f, s) {
         a[ids[which(x==ii)], ii] <- 1L
       }
 
+      cat("--number of dots: original", sum(asums), ", target", l, ", sampled", length(ids), ", result", sum(a), "\n")
+      
       save(a, file = file.path(dir2, paste0("pop_", i, "_", j, ".rdata")))
     }
   }

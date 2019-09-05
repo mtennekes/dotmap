@@ -237,7 +237,7 @@ dotmap_project <- function(dir,
   z_max <- max(zm)
   
   if (is.na(scale)) {
-    scale <- 2^(z_r - z_res)
+    scale <- 4^(z_r - z_res)
   } else {
     if (length(scale) != length(z_res)) stop("scale length should be ", length(z_res))
     if (scale[length(z_res)] != 1) stop("last scale number should be 1")
