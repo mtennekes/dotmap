@@ -42,7 +42,7 @@ show_dotmap <- function(dm, localhost = "http://127.0.0.1", show.region = TRUE) 
   if (show.region) {
     tm <- tm + tm_view(set.zoom.limits = c(zmin, zmax))
   } else {
-    bbx <- bb(region, projection = "longlat")
+    bbx <- bb(region, projection = 4326)
     lng <- mean(bbx[c(1,3)])
     lat <- mean(bbx[c(2,4)])
     tm <- tm + tm_view(bbox = bb(region), set.zoom.limits = c(zmin, zmax))

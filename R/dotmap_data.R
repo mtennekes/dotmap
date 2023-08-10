@@ -201,9 +201,9 @@ dotmap_project <- function(dir,
   #save(lookup, file = file_lookup)
   
   if (is.na(bbx[1])) {
-    bbx <- tmaptools::bb(region, projection = "longlat")
+    bbx <- tmaptools::bb(region, projection = 4326)
   } else {
-    bbx <- tmaptools::bb(bbx, projection = "longlat")
+    bbx <- tmaptools::bb(bbx, projection = 4326)
   }
   
   ### check z
@@ -243,7 +243,7 @@ dotmap_project <- function(dir,
     if (scale[length(z_res)] != 1) stop("last scale number should be 1")
   }
   
-  bbx2 <- tmaptools::bb(rasterInfo(z_min, bbx, pixels=tile_size)$bbx, current.projection="merc", projection = "longlat", ext=.99999999)
+  bbx2 <- tmaptools::bb(rasterInfo(z_min, bbx, pixels=tile_size)$bbx, current.projection=3857, projection = 4326, ext=.99999999)
   
   ri <- rasterInfo(zoom=z_min:z_max, bbx2, pixels = tile_size)
   
@@ -255,7 +255,7 @@ dotmap_project <- function(dir,
   
   res <- ri[[paste0("z", z_r)]]
   
-  dist_res <- tmaptools::approx_distances(res$bbx, projection = "merc")
+  dist_res <- tmaptools::approx_distances(res$bbx, projection = 3857)
 
   get_hv_dist <- function(bbx, projection) {
     #derived from tmaptools::approx_distances

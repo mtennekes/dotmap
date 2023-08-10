@@ -9,8 +9,8 @@ rasterInfo <- function(zoom, bbx, pixels=256) {
     
     bbx_merc <- tmaptools::bb(xlim = range(c(df$lon1, df$lon2)),
                    ylim = range(c(df$lat1, df$lat2)),
-                   current.projection = "longlat",
-                   projection="merc")
+                   current.projection = 4326,
+                   projection=3857)
     nx <- (xmax-xmin)
     ny <- (ymax-ymin)
     px <- nx * pixels
